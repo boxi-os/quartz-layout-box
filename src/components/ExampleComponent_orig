@@ -5,35 +5,24 @@ import type {
 } from "@quartz-community/types";
 import { classNames } from "../util/lang";
 import style from "./styles/example.scss";
-import fs from "fs";  
-import path from "path";  
 // @ts-expect-error - inline script import handled by Quartz bundler
 import script from "./scripts/example.inline.ts";
 
 export interface ExampleComponentOptions {
-  datei?: string;
+  prefix?: string;
+  suffix?: string;
   className?: string;
 }
 
 export default ((opts?: ExampleComponentOptions) => {
-  const { datei = "snippet.html", className = "layout-box" } = opts ?? {};
-
-  let snippetHtml = ""; 
-  if (datei) {  
-  try {  
-    const snippetPath = path.join(process.cwd(), "quartz", "static", "snippets", datei);  
-    snippetHtml = fs.readFileSync(snippetPath, "utf-8");  
-  } catch {  
-    console.warn(`Snippet-Datei "${datei}" nicht gefunden.`);  
-  }  
-  }
+  const { prefix = "", suffix = "", className = "example-component" } = opts ?? {};
 
   const Component: QuartzComponent = (props: QuartzComponentProps) => {
-    return (  
-      <div class={classNames(className)}>  
-        {snippetHtml && <div dangerouslySetInnerHTML={{ __html: snippetHtml }} />}  
-      </div>  
-    );  
+    const frontmatter = props.fileData?.frontmatter as { title?: string } | undefined;
+    const title = frontmatter?.title ?? "Untitled";
+    const fullText = `${prefix}${title}${suffix}`;
+
+    return <div class={classNames(className)}>{fullText}</div>;
   };
 
   Component.css = style;
