@@ -1,8 +1,7 @@
 import { QuartzComponent } from '@quartz-community/types';
 
 interface ExampleComponentOptions {
-    prefix?: string;
-    suffix?: string;
+    datei?: string;
     className?: string;
 }
 declare const _default: (opts?: ExampleComponentOptions) => QuartzComponent;

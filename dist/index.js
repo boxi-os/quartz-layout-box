@@ -1,6 +1,7 @@
 import { createRequire } from 'module';
 import path2 from 'path';
 import fs from 'fs/promises';
+import fs2 from 'fs';
 
 createRequire(import.meta.url);
 
@@ -423,7 +424,7 @@ function transformGfmAutolinkLiterals(tree) {
     { ignore: ["link", "linkReference"] }
   );
 }
-function findUrl(_, protocol, domain2, path3, match) {
+function findUrl(_2, protocol, domain2, path4, match) {
   let prefix = "";
   if (!previous(match)) {
     return false;
@@ -436,7 +437,7 @@ function findUrl(_, protocol, domain2, path3, match) {
   if (!isCorrectDomain(domain2)) {
     return false;
   }
-  const parts = splitUrl(domain2 + path3);
+  const parts = splitUrl(domain2 + path4);
   if (!parts[0]) return false;
   const result = {
     type: "link",
@@ -449,7 +450,7 @@ function findUrl(_, protocol, domain2, path3, match) {
   }
   return result;
 }
-function findEmail(_, atext, label, match) {
+function findEmail(_2, atext, label, match) {
   if (
     // Not an expected previous character.
     !previous(match, true) || // Label ends in not allowed character.
@@ -544,7 +545,7 @@ function exitFootnoteDefinition(token) {
 function footnoteReferencePeek() {
   return "[";
 }
-function footnoteReference(node2, _, state, info) {
+function footnoteReference(node2, _2, state, info) {
   const tracker = state.createTracker(info);
   let value = tracker.move("[^");
   const exit2 = state.enter("footnoteReference");
@@ -583,7 +584,7 @@ function gfmFootnoteToMarkdown(options) {
     // This is on by default already.
     unsafe: [{ character: "[", inConstruct: ["label", "phrasing", "reference"] }]
   };
-  function footnoteDefinition(node2, _, state, info) {
+  function footnoteDefinition(node2, _2, state, info) {
     const tracker = state.createTracker(info);
     let value = tracker.move("[^");
     const exit2 = state.enter("footnoteDefinition");
@@ -648,7 +649,7 @@ function enterStrikethrough(token) {
 function exitStrikethrough(token) {
   this.exit(token);
 }
-function handleDelete(node2, _, state, info) {
+function handleDelete(node2, _2, state, info) {
   const tracker = state.createTracker(info);
   const exit2 = state.enter("strikethrough");
   let value = tracker.move("~~");
@@ -807,7 +808,7 @@ function toAlignment(value) {
 }
 
 // node_modules/mdast-util-to-markdown/lib/handle/blockquote.js
-function blockquote(node2, _, state, info) {
+function blockquote(node2, _2, state, info) {
   const exit2 = state.enter("blockquote");
   const tracker = state.createTracker(info);
   tracker.move("> ");
@@ -819,7 +820,7 @@ function blockquote(node2, _, state, info) {
   exit2();
   return value;
 }
-function map(line, _, blank) {
+function map(line, _2, blank) {
   return ">" + (blank ? "" : " ") + line;
 }
 
@@ -844,7 +845,7 @@ function listInScope(stack, list2, none) {
 }
 
 // node_modules/mdast-util-to-markdown/lib/handle/break.js
-function hardBreak(_, _1, state, info) {
+function hardBreak(_2, _1, state, info) {
   let index = -1;
   while (++index < state.unsafe.length) {
     if (state.unsafe[index].character === "\n" && patternInScope(state.stack, state.unsafe[index])) {
@@ -900,7 +901,7 @@ function checkFence(state) {
 }
 
 // node_modules/mdast-util-to-markdown/lib/handle/code.js
-function code(node2, _, state, info) {
+function code(node2, _2, state, info) {
   const marker = checkFence(state);
   const raw = node2.value || "";
   const suffix = marker === "`" ? "GraveAccent" : "Tilde";
@@ -947,7 +948,7 @@ function code(node2, _, state, info) {
   exit2();
   return value;
 }
-function map2(line, _, blank) {
+function map2(line, _2, blank) {
   return (blank ? "" : "    ") + line;
 }
 
@@ -963,7 +964,7 @@ function checkQuote(state) {
 }
 
 // node_modules/mdast-util-to-markdown/lib/handle/definition.js
-function definition(node2, _, state, info) {
+function definition(node2, _2, state, info) {
   const quote = checkQuote(state);
   const suffix = quote === '"' ? "Quote" : "Apostrophe";
   const exit2 = state.enter("definition");
@@ -1088,7 +1089,7 @@ function encodeInfo(outside, inside, marker) {
 
 // node_modules/mdast-util-to-markdown/lib/handle/emphasis.js
 emphasis.peek = emphasisPeek;
-function emphasis(node2, _, state, info) {
+function emphasis(node2, _2, state, info) {
   const marker = checkEmphasis(state);
   const exit2 = state.enter("emphasis");
   const tracker = state.createTracker(info);
@@ -1122,7 +1123,7 @@ function emphasis(node2, _, state, info) {
   };
   return before + between + after;
 }
-function emphasisPeek(_, _1, state) {
+function emphasisPeek(_2, _1, state) {
   return state.options.emphasis || "*";
 }
 
@@ -1200,7 +1201,7 @@ function formatHeadingAsSetext(node2, state) {
 }
 
 // node_modules/mdast-util-to-markdown/lib/handle/heading.js
-function heading(node2, _, state, info) {
+function heading(node2, _2, state, info) {
   const rank = Math.max(Math.min(6, node2.depth || 1), 1);
   const tracker = state.createTracker(info);
   if (formatHeadingAsSetext(node2, state)) {
@@ -1252,7 +1253,7 @@ function htmlPeek() {
 
 // node_modules/mdast-util-to-markdown/lib/handle/image.js
 image.peek = imagePeek;
-function image(node2, _, state, info) {
+function image(node2, _2, state, info) {
   const quote = checkQuote(state);
   const suffix = quote === '"' ? "Quote" : "Apostrophe";
   const exit2 = state.enter("image");
@@ -1309,7 +1310,7 @@ function imagePeek() {
 
 // node_modules/mdast-util-to-markdown/lib/handle/image-reference.js
 imageReference.peek = imageReferencePeek;
-function imageReference(node2, _, state, info) {
+function imageReference(node2, _2, state, info) {
   const type = node2.referenceType;
   const exit2 = state.enter("imageReference");
   let subexit = state.enter("label");
@@ -1348,7 +1349,7 @@ function imageReferencePeek() {
 
 // node_modules/mdast-util-to-markdown/lib/handle/inline-code.js
 inlineCode.peek = inlineCodePeek;
-function inlineCode(node2, _, state) {
+function inlineCode(node2, _2, state) {
   let value = node2.value || "";
   let sequence = "`";
   let index = -1;
@@ -1394,7 +1395,7 @@ function formatLinkAsAutolink(node2, state) {
 
 // node_modules/mdast-util-to-markdown/lib/handle/link.js
 link.peek = linkPeek;
-function link(node2, _, state, info) {
+function link(node2, _2, state, info) {
   const quote = checkQuote(state);
   const suffix = quote === '"' ? "Quote" : "Apostrophe";
   const tracker = state.createTracker(info);
@@ -1468,13 +1469,13 @@ function link(node2, _, state, info) {
   exit2();
   return value;
 }
-function linkPeek(node2, _, state) {
+function linkPeek(node2, _2, state) {
   return formatLinkAsAutolink(node2, state) ? "<" : "[";
 }
 
 // node_modules/mdast-util-to-markdown/lib/handle/link-reference.js
 linkReference.peek = linkReferencePeek;
-function linkReference(node2, _, state, info) {
+function linkReference(node2, _2, state, info) {
   const type = node2.referenceType;
   const exit2 = state.enter("linkReference");
   let subexit = state.enter("label");
@@ -1645,7 +1646,7 @@ function listItem(node2, parent, state, info) {
 }
 
 // node_modules/mdast-util-to-markdown/lib/handle/paragraph.js
-function paragraph(node2, _, state, info) {
+function paragraph(node2, _2, state, info) {
   const exit2 = state.enter("paragraph");
   const subexit = state.enter("phrasing");
   const value = state.containerPhrasing(node2, info);
@@ -1683,7 +1684,7 @@ var phrasing = (
 );
 
 // node_modules/mdast-util-to-markdown/lib/handle/root.js
-function root(node2, _, state, info) {
+function root(node2, _2, state, info) {
   const hasPhrasing = node2.children.some(function(d2) {
     return phrasing(d2);
   });
@@ -1704,7 +1705,7 @@ function checkStrong(state) {
 
 // node_modules/mdast-util-to-markdown/lib/handle/strong.js
 strong.peek = strongPeek;
-function strong(node2, _, state, info) {
+function strong(node2, _2, state, info) {
   const marker = checkStrong(state);
   const exit2 = state.enter("strong");
   const tracker = state.createTracker(info);
@@ -1738,12 +1739,12 @@ function strong(node2, _, state, info) {
   };
   return before + between + after;
 }
-function strongPeek(_, _1, state) {
+function strongPeek(_2, _1, state) {
   return state.options.strong || "*";
 }
 
 // node_modules/mdast-util-to-markdown/lib/handle/text.js
-function text(node2, _, state, info) {
+function text(node2, _2, state, info) {
   return state.safe(node2.value, info);
 }
 
@@ -1759,7 +1760,7 @@ function checkRuleRepetition(state) {
 }
 
 // node_modules/mdast-util-to-markdown/lib/handle/thematic-break.js
-function thematicBreak(_, _1, state) {
+function thematicBreak(_2, _1, state) {
   const value = (checkRule(state) + (state.options.ruleSpaces ? " " : "")).repeat(checkRuleRepetition(state));
   return state.options.ruleSpaces ? value.slice(0, -1) : value;
 }
@@ -1878,15 +1879,15 @@ function gfmTableToMarkdown(options) {
       tableRow: handleTableRow
     }
   };
-  function handleTable(node2, _, state, info) {
+  function handleTable(node2, _2, state, info) {
     return serializeData(handleTableAsData(node2, state, info), node2.align);
   }
-  function handleTableRow(node2, _, state, info) {
+  function handleTableRow(node2, _2, state, info) {
     const row = handleTableRowAsData(node2, state, info);
     const value = serializeData([row]);
     return value.slice(0, value.indexOf("\n"));
   }
-  function handleTableCell(node2, _, state, info) {
+  function handleTableCell(node2, _2, state, info) {
     const exit2 = state.enter("tableCell");
     const subexit = state.enter("phrasing");
     const value = state.containerPhrasing(node2, {
@@ -2900,8 +2901,8 @@ var EditMap = class {
    * @returns {undefined}
    */
   consume(events) {
-    this.map.sort(function(a2, b) {
-      return a2[0] - b[0];
+    this.map.sort(function(a2, b2) {
+      return a2[0] - b2[0];
     });
     if (this.map.length === 0) {
       return;
@@ -3324,8 +3325,8 @@ function flushCell(map3, context, range, rowKind, rowEnd, previousCell) {
       start[1].contentType = "text";
       if (range[3] > range[2] + 1) {
         const a2 = range[2] + 1;
-        const b = range[3] - range[2] - 1;
-        map3.add(a2, b, []);
+        const b2 = range[3] - range[2] - 1;
+        map3.add(a2, b2, []);
       }
     }
     map3.add(range[3] + 1, 0, [["exit", valueToken, context]]);
@@ -3742,13 +3743,13 @@ var example_default = ".example-component {\n  padding: 8px 16px;\n  background:
 var example_inline_default = 'function l(){let e=window.location.pathname;return e.startsWith("/")&&(e=e.slice(1)),e.endsWith("/")&&(e=e.slice(0,-1)),e||"index"}function r(){let e=document.querySelectorAll(".example-component");if(e.length===0)return;let t=[];function o(n){(n.ctrlKey||n.metaKey)&&n.shiftKey&&n.key.toLowerCase()==="e"&&(n.preventDefault(),console.log("[ExampleComponent] Keyboard shortcut triggered!"))}document.addEventListener("keydown",o),t.push(()=>document.removeEventListener("keydown",o));for(let n of e){let i=()=>{console.log("[ExampleComponent] Clicked!")};n.addEventListener("click",i),t.push(()=>n.removeEventListener("click",i))}typeof window<"u"&&window.addCleanup&&window.addCleanup(()=>{t.forEach(n=>n())}),console.log("[ExampleComponent] Initialized with",e.length,"component(s)")}document.addEventListener("nav",e=>{let t=e.detail?.url||l();console.log("[ExampleComponent] Navigation to:",t),r()});document.addEventListener("render",()=>{console.log("[ExampleComponent] Render event - re-initializing"),r()});document.addEventListener("prenav",()=>{let e=document.querySelector(".example-component");e&&sessionStorage.setItem("exampleScrollTop",e.scrollTop?.toString()||"0")});\n';
 var l;
 l = { __e: function(n2, l2, u3, t2) {
-  for (var i2, o2, r2; l2 = l2.__; ) if ((i2 = l2.__c) && !i2.__) try {
-    if ((o2 = i2.constructor) && null != o2.getDerivedStateFromError && (i2.setState(o2.getDerivedStateFromError(n2)), r2 = i2.__d), null != i2.componentDidCatch && (i2.componentDidCatch(n2, t2 || {}), r2 = i2.__d), r2) return i2.__E = i2;
+  for (var i2, r2, o2; l2 = l2.__; ) if ((i2 = l2.__c) && !i2.__) try {
+    if ((r2 = i2.constructor) && null != r2.getDerivedStateFromError && (i2.setState(r2.getDerivedStateFromError(n2)), o2 = i2.__d), null != i2.componentDidCatch && (i2.componentDidCatch(n2, t2 || {}), o2 = i2.__d), o2) return i2.__E = i2;
   } catch (l3) {
     n2 = l3;
   }
   throw n2;
-} }, "function" == typeof Promise ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout;
+} }, "function" == typeof Promise ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout, Math.random().toString(8);
 
 // node_modules/preact/jsx-runtime/dist/jsxRuntime.mjs
 var f2 = 0;
@@ -3762,12 +3763,18 @@ function u2(e2, t2, n2, o2, i2, u3) {
 
 // src/components/ExampleComponent.tsx
 var ExampleComponent_default = ((opts) => {
-  const { prefix = "", suffix = "", className = "example-component" } = opts ?? {};
+  const { datei = "snippet.html", className = "layout-box" } = opts ?? {};
+  let snippetHtml = "";
+  if (datei) {
+    try {
+      const snippetPath = path2.join(process.cwd(), "quartz", "static", "snippets", datei);
+      snippetHtml = fs2.readFileSync(snippetPath, "utf-8");
+    } catch {
+      console.warn(`Snippet-Datei "${datei}" nicht gefunden.`);
+    }
+  }
   const Component = (props) => {
-    const frontmatter = props.fileData?.frontmatter;
-    const title = frontmatter?.title ?? "Untitled";
-    const fullText = `${prefix}${title}${suffix}`;
-    return /* @__PURE__ */ u2("div", { class: classNames(className), children: fullText });
+    return /* @__PURE__ */ u2("div", { class: classNames(className), children: snippetHtml && /* @__PURE__ */ u2("div", { dangerouslySetInnerHTML: { __html: snippetHtml } }) });
   };
   Component.css = example_default;
   Component.afterDOMLoaded = example_inline_default;
