@@ -49,7 +49,7 @@ async function _fetchContentIndex() {
 
 // Main initialization function
 function init() {
-  const components = document.querySelectorAll(".example-component");
+  const components = document.querySelectorAll(".layout-box");
   if (components.length === 0) return;
 
   // Example: Track cleanup functions for event listeners
@@ -104,7 +104,7 @@ document.addEventListener("render", () => {
 // 'prenav' fires before navigation - use for saving state
 document.addEventListener("prenav", () => {
   // Example: Save scroll position before navigation
-  const component = document.querySelector(".example-component");
+  const component = document.querySelector(".layout-box");
   if (component) {
     sessionStorage.setItem("exampleScrollTop", component.scrollTop?.toString() || "0");
   }

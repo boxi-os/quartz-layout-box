@@ -53,10 +53,8 @@ export interface ExampleEmitterOptions {
 }
 
 export interface ExampleComponentOptions {
-  /** Text to prefix before the title */
-  prefix?: string;
-  /** Text to suffix after the title */
-  suffix?: string;
+  /** Snippet filename under quartz/static/snippets/, defaults to snippet.html */
+  datei?: string;
   /** CSS class name to apply */
   className?: string;
 }
