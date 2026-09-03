@@ -147,7 +147,9 @@ Style it from your site's `quartz/styles/custom.scss`, for example:
 }
 ```
 
-Images with class `img-light` are shown in the light theme, `img-dark` in the dark theme.
+Images with class `img-light` are shown in the light theme, `img-dark` in the dark theme. The plugin
+sets `display` on both variants, so do not add a `display` rule for them in `custom.scss`: site CSS
+is unlayered and overrides the plugin's layered rules, which would show both images at once.
 
 ## Notes
 

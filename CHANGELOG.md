@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The light/dark image switch now sets `display` on `.img-light` as well, so the plugin fully owns
+  the visibility of both variants. A site no longer needs its own rule — and must not add one, since
+  site CSS is unlayered and would override the plugin's layered rules.
 - The German documentation moved from a generated `docs/` HTML file and PDF to `README.de.md`, so it
   is diffable and gets updated alongside the English README.
 - Changesets and the npm release workflow were removed. The plugin is installed via `github:` and was

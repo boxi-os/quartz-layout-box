@@ -9,6 +9,12 @@
     max-width: 100%;
   }
 
+  // The switch sets `display` on both variants, so a site does not need a rule of its
+  // own. That matters: site CSS is unlayered and would beat these layered rules.
+  .img-light {
+    display: block;
+  }
+
   .img-dark {
     display: none;
   }

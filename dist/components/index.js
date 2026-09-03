@@ -23218,7 +23218,7 @@ function renderMarkdown(markdown) {
 }
 
 // src/components/styles/layout-box.scss
-var layout_box_default = ".layout-box {\n  width: 100%;\n}\n.layout-box > :first-child {\n  margin-top: 0;\n}\n.layout-box img {\n  max-width: 100%;\n}\n.layout-box .img-dark {\n  display: none;\n}\n\n:root[saved-theme=dark] .layout-box .img-light {\n  display: none;\n}\n:root[saved-theme=dark] .layout-box .img-dark {\n  display: block;\n}\n\n.layout-box-title {\n  margin: 0 0 0.5rem 0;\n}\n\nsummary.layout-box-title {\n  cursor: pointer;\n}\n\n.layout-box-missing {\n  padding: 0.5rem;\n  border: 1px dashed var(--gray);\n  border-radius: 5px;\n  font-size: 0.8rem;\n  color: var(--gray);\n}";
+var layout_box_default = ".layout-box {\n  width: 100%;\n}\n.layout-box > :first-child {\n  margin-top: 0;\n}\n.layout-box img {\n  max-width: 100%;\n}\n.layout-box .img-light {\n  display: block;\n}\n.layout-box .img-dark {\n  display: none;\n}\n\n:root[saved-theme=dark] .layout-box .img-light {\n  display: none;\n}\n:root[saved-theme=dark] .layout-box .img-dark {\n  display: block;\n}\n\n.layout-box-title {\n  margin: 0 0 0.5rem 0;\n}\n\nsummary.layout-box-title {\n  cursor: pointer;\n}\n\n.layout-box-missing {\n  padding: 0.5rem;\n  border: 1px dashed var(--gray);\n  border-radius: 5px;\n  font-size: 0.8rem;\n  color: var(--gray);\n}";
 var defaultOptions = {
   file: "snippet.html",
   dir: "quartz/static/snippets",

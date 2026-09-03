@@ -205,7 +205,10 @@ Gestaltet wird in der `quartz/styles/custom.scss` der Site. Beispiel:
 ```
 
 Mitgelieferte Regeln: Bilder werden auf die Breite der Box begrenzt. Bilder mit Klasse `img-light`
-erscheinen nur im hellen, Bilder mit `img-dark` nur im dunklen Theme. Eine fehlende Snippet-Datei
+erscheinen nur im hellen, Bilder mit `img-dark` nur im dunklen Theme; das Plugin setzt dabei
+`display` für beide Varianten. Deshalb in der `custom.scss` **keine** eigene `display`-Regel für
+diese Bilder setzen: Site-CSS ist ungelayert und schlägt die gelayerten Plugin-Regeln, wodurch beide
+Bilder gleichzeitig sichtbar würden. Eine fehlende Snippet-Datei
 wird im Serve-Modus als gestrichelter Kasten dargestellt (Klasse `layout-box-missing`).
 
 ## 10. Verhalten bei Fehlern
