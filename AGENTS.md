@@ -29,7 +29,9 @@ See `ARCHITECTURE.md` for the lifecycle and file map, `README.md` for user-facin
 
 1. Change code under `src/` and add/adjust tests in `test/`.
 2. `npm run check` (typecheck, lint, prettier, vitest) must pass.
-3. `npm run build`, commit `dist/` together with the source change.
+3. `npm run build`, commit `dist/` together with the source change. CI rebuilds `dist/` and
+   fails if the result differs from the committed one, and checks every emitted `.js` file
+   for unbundled external imports.
 4. Update `README.md` (options table) and `CHANGELOG.md`.
 
 ## Constraints

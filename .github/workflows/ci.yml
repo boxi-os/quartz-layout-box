@@ -14,39 +14,87 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install
+      - run: npm ci
       - run: npm run typecheck --if-present
       - run: npm run lint --if-present
       - run: npm run format --if-present
       - run: npm run test --if-present
       - run: npm run build
+      - name: Verify committed dist/ is up to date
+        run: |
+          git add --intent-to-add dist
+          if ! git diff --exit-code --stat -- dist; then
+            echo "ERROR: the freshly built dist/ differs from the committed one."
+            echo "Run 'npm run build' and commit dist/ together with the source change."
+            exit 1
+          fi
+          echo "dist/ matches the committed build output."
       - name: Verify dist externals
         run: |
-          node -e "
-          const fs = require('fs');
-          const dist = 'dist/index.js';
-          if (!fs.existsSync(dist)) process.exit(0);
-          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+          cat > "$RUNNER_TEMP/verify-dist-externals.cjs" <<'EOF'
+          const fs = require("fs");
+          const path = require("path");
+          const { builtinModules } = require("module");
+
+          const pkg = JSON.parse(fs.readFileSync("package.json", "utf-8"));
           const peerDeps = Object.keys(pkg.peerDependencies || {});
-          const builtins = new Set(['assert','buffer','child_process','cluster','console','constants','crypto','dgram','dns','domain','events','fs','http','http2','https','inspector','module','net','os','path','perf_hooks','process','punycode','querystring','readline','repl','stream','string_decoder','sys','timers','tls','trace_events','tty','url','util','v8','vm','wasi','worker_threads','zlib']);
-          const shared = ['@quartz-community/','preact','@jackyzha0/quartz','vfile','unified'];
-          const content = fs.readFileSync(dist, 'utf-8');
-          const re = /^\s*(?:import\s+.*\s+from|export\s+.*\s+from)\s+[\"']([^\"'./][^\"']*)[\"']/gm;
-          const unexpected = new Set();
-          for (const m of content.matchAll(re)) {
-            const s = m[1];
-            if (s.startsWith('node:')) continue;
-            const bare = s.includes('/') && s.startsWith('@') ? s.split('/').slice(0,2).join('/') : s.split('/')[0];
-            if (builtins.has(bare)) continue;
-            if (shared.some(p => s.startsWith(p))) continue;
-            if (peerDeps.some(d => s === d || s.startsWith(d + '/'))) continue;
-            unexpected.add(s);
-          }
-          if (unexpected.size > 0) {
-            console.error('ERROR: dist/ has unbundled external imports that will fail at runtime:');
-            for (const u of unexpected) console.error('  - ' + u);
-            console.error('Move these from dependencies to devDependencies so tsup bundles them.');
+          const builtins = new Set(builtinModules);
+          // Packages that must stay a single shared instance at runtime (see SINGLETON_EXTERNALS
+          // in tsup.config.ts); Quartz provides them in the host.
+          const shared = ["@quartz-community/", "preact", "@jackyzha0/quartz", "vfile", "unified"];
+
+          const bareName = (spec) =>
+            spec.startsWith("@") ? spec.split("/").slice(0, 2).join("/") : spec.split("/")[0];
+
+          const allowed = (spec) =>
+            spec.startsWith("node:") ||
+            builtins.has(bareName(spec)) ||
+            shared.some((p) => spec === p || spec.startsWith(p.endsWith("/") ? p : p + "/")) ||
+            peerDeps.some((d) => spec === d || spec.startsWith(d + "/"));
+
+          const collect = (dir, out = []) => {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+              const p = path.join(dir, entry.name);
+              if (entry.isDirectory()) collect(p, out);
+              else if (entry.name.endsWith(".js")) out.push(p);
+            }
+            return out;
+          };
+
+          if (!fs.existsSync("dist")) {
+            console.error("ERROR: dist/ is missing. Run `npm run build` first.");
             process.exit(1);
           }
-          console.log('dist/ externals verified: all imports are bundled or allowlisted.');
-          "
+
+          // Every emitted entry point is checked, not just dist/index.js: Quartz loads a
+          // component-only plugin through dist/components/index.js.
+          const files = collect("dist");
+          if (files.length === 0) {
+            console.error("ERROR: dist/ contains no .js files.");
+            process.exit(1);
+          }
+
+          const re = /^\s*(?:import\s+.*\s+from|export\s+.*\s+from)\s+["']([^"'./][^"']*)["']/gm;
+          const unexpected = new Map();
+          for (const file of files) {
+            for (const m of fs.readFileSync(file, "utf-8").matchAll(re)) {
+              if (allowed(m[1])) continue;
+              if (!unexpected.has(m[1])) unexpected.set(m[1], new Set());
+              unexpected.get(m[1]).add(file);
+            }
+          }
+
+          if (unexpected.size > 0) {
+            console.error("ERROR: dist/ has unbundled external imports that will fail at runtime:");
+            for (const [spec, where] of unexpected) {
+              console.error(`  - ${spec} (in ${[...where].join(", ")})`);
+            }
+            console.error("Move these from dependencies to devDependencies so tsup bundles them.");
+            process.exit(1);
+          }
+
+          console.log(
+            `dist/ externals verified in ${files.length} file(s): all imports are bundled or allowlisted.`,
+          );
+          EOF
+          node "$RUNNER_TEMP/verify-dist-externals.cjs"
