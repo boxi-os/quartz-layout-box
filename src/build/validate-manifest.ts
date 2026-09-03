@@ -24,6 +24,16 @@ export function validateManifest(): void {
   if (!quartz.category) warnings.push("quartz.category is missing");
   if (!quartz.version) warnings.push("quartz.version is missing");
 
+  // Quartz reports the manifest version when it loads the plugin, so a mismatch shows
+  // users a version the package does not have. Nothing bumps the two fields together,
+  // hence the hard failure rather than a warning.
+  if (quartz.version && quartz.version !== pkg.version) {
+    throw new Error(
+      `Version mismatch: package.json "version" is ${pkg.version}, ` +
+        `but "quartz.version" is ${quartz.version}. Both must be bumped together.`,
+    );
+  }
+
   if (warnings.length > 0) {
     console.warn("\x1b[33m⚠ Plugin manifest warnings:\x1b[0m");
     for (const w of warnings) {

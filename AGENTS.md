@@ -22,7 +22,7 @@ See `ARCHITECTURE.md` for the lifecycle and file map, `README.md` for user-facin
 
 - `dist/`: build output. **Tracked and committed** (Quartz installs from it). Rebuild with
   `npm run build` after any change under `src/` and commit the result.
-- `.github/`, `.changeset/`: CI and release configuration.
+- `.github/`: CI configuration.
 - `tsup.config.ts`: only touch to add native-dependency exclusions.
 
 ## Workflow
@@ -42,4 +42,7 @@ See `ARCHITECTURE.md` for the lifecycle and file map, `README.md` for user-facin
   packages that are not installed here.
 - No client-side script is needed; if one is ever added, follow Quartz's `nav`/`addCleanup` rules
   and the `.inline.ts` loader in `tsup.config.ts`.
-- `preact` and `vfile` stay peerDependencies; everything else is bundled.
+- `preact` and `vfile` stay peerDependencies and external; everything else, `dependencies`
+  included, must be bundled — Quartz only symlinks the peers into a pre-built plugin. Never widen
+  `noExternal` in `tsup.config.ts` to a catch-all; it is checked before `external` and would inline
+  Preact into the bundle.

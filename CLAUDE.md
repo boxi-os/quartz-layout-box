@@ -59,15 +59,20 @@ Run tests matching a name: `npx vitest run -t "placeholders"`
   `@jackyzha0/quartz`, `vfile` (singleton externals). `.scss` compiled via `sass` to a CSS string.
 - Import `@quartz-community/utils` via subpaths (`/lang`, `/escape`); the root index requires
   packages that are not installed here.
-- Quartz runs `npm install --ignore-scripts`, builds only if `dist/` is missing, then
-  `npm prune --omit=dev` in the installed plugin directory. Runtime imports must therefore be bundled
-  or listed in `dependencies`.
+- Because `dist/` is committed and not gitignored, Quartz treats the plugin as pre-built: it skips
+  `npm install` for it entirely and only symlinks the declared `peerDependencies` into the installed
+  plugin directory (`hasPrebuiltDist()` / `linkPeerDependencies()` in
+  `quartz/plugins/loader/gitLoader.ts`). `dependencies` are never installed there, so everything
+  except the peers must be bundled. The install-build-prune path applies only to plugins that ship
+  without a `dist/`.
 
 ## Claude-Skills in diesem Projekt
 
-Skills werden projektlokal unter `.claude/skills/` bereitgestellt, nie global.
-Firecrawl-Skills bei Bedarf aus dem gemeinsamen Store verlinken:
+Skills werden projektlokal unter `.claude/skills/` bereitgestellt, nie global. Skills, die nicht
+projektspezifisch sind, liegen im gemeinsamen Store `~/.agents/skills/` und werden hierher verlinkt;
+die Symlinks sind in `.gitignore` ausgenommen, weil sie absolute Pfade enthalten:
 
     ln -s ~/.agents/skills/firecrawl-scrape .claude/skills/firecrawl-scrape
+    ln -s ~/.agents/skills/projekt-dokumentieren .claude/skills/projekt-dokumentieren
 
 Verfügbare Skills im Store: `ls ~/.agents/skills/`

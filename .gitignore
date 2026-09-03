@@ -42,4 +42,8 @@ coverage/
 
 # Claude: lokal verlinkte Skills (Symlinks mit absoluten Pfaden, nicht teambar)
 .claude/skills/firecrawl*
+.claude/skills/projekt-dokumentieren
 .claude/settings.local.json
+
+# Claude: persoenliche Projektkonfiguration (enthaelt den Vault-Namen)
+.claude/wiki-docs.json

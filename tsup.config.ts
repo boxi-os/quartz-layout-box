@@ -75,20 +75,26 @@ const inlineScriptPlugin: Plugin = {
 };
 
 /**
- * Singleton externals: packages that MUST be the same instance at runtime
- * across all plugins and the Quartz host. Everything else gets bundled.
+ * Singleton externals: packages that must resolve to the Quartz host's own copy at
+ * runtime instead of being copied into the bundle. A second Preact instance carries
+ * its own `options` hooks, which breaks hooks and context.
+ *
+ * Only peerDependencies may appear here. When a plugin ships a pre-built `dist/`,
+ * Quartz skips `npm install` for it entirely and merely symlinks the declared
+ * peerDependencies into the plugin directory (`linkPeerDependencies()` in
+ * `quartz/plugins/loader/gitLoader.ts`). `dependencies` are never installed, so
+ * anything outside this list — `@quartz-community/*`, unified, remark, rehype —
+ * has to be bundled or it will not resolve.
  */
-const SINGLETON_EXTERNALS = [
-  "preact",
-  "preact/hooks",
-  "preact/jsx-runtime",
-  "preact/compat",
-  "@jackyzha0/quartz",
-  "@jackyzha0/quartz/*",
-  "vfile",
-  "vfile/*",
-  "unified",
-];
+const SINGLETON_EXTERNALS = [/^preact($|\/)/, /^@jackyzha0\/quartz($|\/)/, /^vfile($|\/)/];
+
+/**
+ * tsup externalizes production dependencies automatically, so `@quartz-community/*`
+ * has to be pulled back in explicitly. `noExternal` must never be a catch-all such
+ * as `/.*\/`: tsup checks it before `external`, which would silently bundle the
+ * singletons above.
+ */
+const FORCE_BUNDLED = [/^@quartz-community\//];
 
 export default defineConfig({
   entry: {
@@ -106,7 +112,7 @@ export default defineConfig({
   splitting: false,
   outDir: "dist",
   platform: "node",
-  noExternal: [/.*/],
+  noExternal: FORCE_BUNDLED,
   external: SINGLETON_EXTERNALS,
   banner: {
     js: 'import { createRequire } from "module"; const require = createRequire(import.meta.url);',

@@ -29,9 +29,9 @@ jobs:
             exit 1
           fi
           echo "dist/ matches the committed build output."
-      - name: Verify dist externals
+      - name: Verify dist bundling
         run: |
-          cat > "$RUNNER_TEMP/verify-dist-externals.cjs" <<'EOF'
+          cat > "$RUNNER_TEMP/verify-dist-bundling.cjs" <<'EOF'
           const fs = require("fs");
           const path = require("path");
           const { builtinModules } = require("module");
@@ -39,18 +39,21 @@ jobs:
           const pkg = JSON.parse(fs.readFileSync("package.json", "utf-8"));
           const peerDeps = Object.keys(pkg.peerDependencies || {});
           const builtins = new Set(builtinModules);
-          // Packages that must stay a single shared instance at runtime (see SINGLETON_EXTERNALS
-          // in tsup.config.ts); Quartz provides them in the host.
-          const shared = ["@quartz-community/", "preact", "@jackyzha0/quartz", "vfile", "unified"];
+
+          // Everything Quartz provides at runtime: the host itself plus the declared
+          // peerDependencies, which Quartz symlinks into the plugin directory. Anything
+          // else — dependencies included — is never installed there and must be bundled.
+          const hostPackages = ["@jackyzha0/quartz", ...peerDeps];
 
           const bareName = (spec) =>
             spec.startsWith("@") ? spec.split("/").slice(0, 2).join("/") : spec.split("/")[0];
 
-          const allowed = (spec) =>
+          const isPackage = (spec, name) => spec === name || spec.startsWith(name + "/");
+
+          const allowedImport = (spec) =>
             spec.startsWith("node:") ||
             builtins.has(bareName(spec)) ||
-            shared.some((p) => spec === p || spec.startsWith(p.endsWith("/") ? p : p + "/")) ||
-            peerDeps.some((d) => spec === d || spec.startsWith(d + "/"));
+            hostPackages.some((name) => isPackage(spec, name));
 
           const collect = (dir, out = []) => {
             for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -74,27 +77,47 @@ jobs:
             process.exit(1);
           }
 
-          const re = /^\s*(?:import\s+.*\s+from|export\s+.*\s+from)\s+["']([^"'./][^"']*)["']/gm;
-          const unexpected = new Map();
+          const importRe =
+            /^\s*(?:import\s+.*\s+from|export\s+.*\s+from)\s+["']([^"'./][^"']*)["']/gm;
+          const errors = [];
+
           for (const file of files) {
-            for (const m of fs.readFileSync(file, "utf-8").matchAll(re)) {
-              if (allowed(m[1])) continue;
-              if (!unexpected.has(m[1])) unexpected.set(m[1], new Set());
-              unexpected.get(m[1]).add(file);
+            for (const m of fs.readFileSync(file, "utf-8").matchAll(importRe)) {
+              if (allowedImport(m[1])) continue;
+              errors.push(
+                `${file}: imports "${m[1]}" externally, but Quartz will not have it installed. ` +
+                  `Move it out of "dependencies" so tsup bundles it, or add it to peerDependencies.`,
+              );
+            }
+
+            // The counterpart: a singleton that got inlined resolves to a second instance
+            // at runtime. The sourcemap lists every module esbuild copied into the bundle.
+            const mapFile = `${file}.map`;
+            if (!fs.existsSync(mapFile)) {
+              errors.push(`${file}: no sourcemap, cannot verify that singletons stay external.`);
+              continue;
+            }
+            const sources = JSON.parse(fs.readFileSync(mapFile, "utf-8")).sources || [];
+            for (const name of peerDeps) {
+              const inlined = sources.filter((s) => s.includes(`node_modules/${name}/`));
+              if (inlined.length === 0) continue;
+              errors.push(
+                `${file}: bundles a copy of "${name}" (e.g. ${inlined[0]}), which must stay a ` +
+                  `single shared instance. Check that noExternal in tsup.config.ts does not ` +
+                  `shadow SINGLETON_EXTERNALS.`,
+              );
             }
           }
 
-          if (unexpected.size > 0) {
-            console.error("ERROR: dist/ has unbundled external imports that will fail at runtime:");
-            for (const [spec, where] of unexpected) {
-              console.error(`  - ${spec} (in ${[...where].join(", ")})`);
-            }
-            console.error("Move these from dependencies to devDependencies so tsup bundles them.");
+          if (errors.length > 0) {
+            console.error("ERROR: dist/ bundling is wrong:");
+            for (const e of errors) console.error(`  - ${e}`);
             process.exit(1);
           }
 
           console.log(
-            `dist/ externals verified in ${files.length} file(s): all imports are bundled or allowlisted.`,
+            `dist/ bundling verified in ${files.length} file(s): only ${hostPackages.join(", ")} ` +
+              `stay external, and none of them is inlined.`,
           );
           EOF
-          node "$RUNNER_TEMP/verify-dist-externals.cjs"
+          node "$RUNNER_TEMP/verify-dist-bundling.cjs"

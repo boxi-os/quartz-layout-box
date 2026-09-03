@@ -15,8 +15,12 @@ Machine-readable architecture overview for `quartz-layout-box`, a Quartz v5 comp
 
 ## Build System
 
-`tsup` bundles three entry points (`index`, `types`, `components/index`) to `dist/` with all
-dependencies inlined except the singleton externals (`preact`, `@jackyzha0/quartz`, `vfile`).
+`tsup` bundles three entry points (`index`, `types`, `components/index`) to `dist/`. Left external
+are only the singletons that must resolve to the host's instance: `preact`, `vfile` and
+`@jackyzha0/quartz`. Everything else is inlined — including `@quartz-community/utils`, unified,
+remark and rehype — because Quartz never installs a pre-built plugin's `dependencies`, it only
+symlinks its `peerDependencies`. `noExternal` must stay narrow: tsup evaluates it before `external`,
+so a catch-all silently inlines the singletons and gives the plugin its own Preact instance.
 `.scss` imports are compiled with `sass` to CSS strings (`Component.css`). `dist/` is committed.
 
 ## Directory Structure

@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- The build inlined its own copy of Preact and vfile: `noExternal: [/.*/]` in `tsup.config.ts` is
+  evaluated before `external` and silently disabled the singleton list. The plugin therefore ran on
+  a second Preact instance with its own `options` hooks. Only VNode creation was affected so far,
+  but hooks and context would have broken. `preact`, `vfile` and `@jackyzha0/quartz` are now
+  genuinely external; everything else stays bundled, since Quartz installs no `dependencies` for a
+  pre-built plugin.
+
+### Changed
+
+- The German documentation moved from a generated `docs/` HTML file and PDF to `README.de.md`, so it
+  is diffable and gets updated alongside the English README.
+- Changesets and the npm release workflow were removed. The plugin is installed via `github:` and was
+  never published to npm; Changesets only bumped `version`, which then silently drifted apart from
+  `quartz.version`. `validateManifest()` now fails the build if the two differ.
+- `vfile` is no longer declared an optional peer dependency. It is left external and the bundled
+  unified pipeline imports it at runtime, so it has to be present; `peerDependenciesMeta` was
+  removed and both peers are required.
+
 ## [0.2.0] - 2026-09-03
 
 ### Breaking

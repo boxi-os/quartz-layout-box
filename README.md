@@ -13,6 +13,8 @@ to hard-code into a theme.
 - Snippet changes are picked up in `quartz build --serve` without a restart
 - Light/dark image switching via `.img-light` / `.img-dark`
 
+A German version of this documentation is available in [README.de.md](README.de.md).
+
 ## Installation
 
 ```bash
