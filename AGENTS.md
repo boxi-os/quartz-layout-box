@@ -1,96 +1,43 @@
-# Quartz Community Plugin Template
+# quartz-layout-box
 
-Provider-agnostic instruction file for AI coding assistants developing Quartz community plugins.
+Provider-agnostic instruction file for AI coding assistants working on this repository.
 
 ## Project Overview
 
-This repository is a template for building, testing, and publishing Quartz community plugins. It uses a factory-function API where plugins are created by functions returning objects with a `name` and lifecycle hooks.
-
-## Plugin Type Decision Tree
-
-Plugins are not mutually exclusive. A single plugin can implement multiple types.
-
-- **Transformer**: Modifies content during the build (remark/rehype). Use if you need to change how Markdown is parsed or rendered.
-- **Filter**: Decides which files to include in the final site. Use for drafts, private notes, or path-based exclusions.
-- **Emitter**: Generates new files (JSON, RSS, CNAME, etc.). Use for site-wide manifests or integration files.
-- **Page Type**: Defines custom routes and page generation logic. Use for virtual pages or non-Markdown content.
-- **Component**: Provides UI elements for Quartz layouts. Use for navigation, sidebars, or custom widgets.
-- **Bases View**: Registers custom views in the `@quartz-community/bases-page` system.
+`quartz-layout-box` is a Quartz v5 **component-only** plugin. It renders an HTML or Markdown
+snippet (from `quartz/static/snippets/` or inline YAML) as a layout component. It started from
+`quartz-community/plugin-template`; the template's example transformer/filter/emitter were removed.
+See `ARCHITECTURE.md` for the lifecycle and file map, `README.md` for user-facing options.
 
 ## Files to Modify
 
-- `src/`: All plugin logic, components, and styles.
-- `package.json`: Plugin manifest (`quartz` field), dependencies, and metadata.
-- `src/i18n/`: Translations for multi-language support.
+- `src/components/LayoutBox.tsx`: component logic.
+- `src/placeholders.ts`, `src/markdown.ts`: helpers.
+- `src/types.ts`: `LayoutBoxOptions` (single source of truth for options).
+- `package.json` → `quartz` manifest: keep `defaultOptions` and the `components` map in sync with
+  the code. The manifest must declare exactly one component so Quartz can resolve it by plugin name.
+- `test/`: vitest tests.
 
 ## Leave Alone
 
-- `dist/`: Build output. Gitignored. Built on install for git sources, pre-built in npm packages.
-- `.github/`: CI/CD workflows. `ci.yml` runs checks, `release.yml` handles Changesets publishing.
-- `.changeset/`: Changesets configuration. Do not modify `config.json`.
-- `tsup.config.ts`: Build configuration. Defines SINGLETON_EXTERNALS and bundling strategy. Only modify to add native dep exclusions.
+- `dist/`: build output. **Tracked and committed** (Quartz installs from it). Rebuild with
+  `npm run build` after any change under `src/` and commit the result.
+- `.github/`, `.changeset/`: CI and release configuration.
+- `tsup.config.ts`: only touch to add native-dependency exclusions.
 
-## Plugin Creation Workflow
+## Workflow
 
-1. **Define Options**: Create an interface for plugin configuration in `src/types.ts`.
-2. **Implement Logic**: Create the plugin factory in a new file (e.g., `src/my-plugin.ts`).
-3. **Export**: Add the plugin to `src/index.ts`.
-4. **Manifest**: Update the `quartz` field in `package.json` with category and default options.
-5. **Test**: Add a test case in `src/tests/` and run `npm test`.
-6. **Build**: Run `npm run build` to verify the build succeeds.
-7. **Changeset**: Run `npx changeset` to create a version bump description.
+1. Change code under `src/` and add/adjust tests in `test/`.
+2. `npm run check` (typecheck, lint, prettier, vitest) must pass.
+3. `npm run build`, commit `dist/` together with the source change.
+4. Update `README.md` (options table) and `CHANGELOG.md`.
 
-## Package.json Quartz Manifest
+## Constraints
 
-The `quartz` field is required for discovery and configuration:
-
-```json
-{
-  "quartz": {
-    "name": "my-plugin",
-    "category": ["transformer", "component"],
-    "defaultOptions": { "enabled": true },
-    "optionSchema": { "enabled": { "type": "boolean" } },
-    "components": { "MyComponent": { "defaultPosition": "right" } }
-  }
-}
-```
-
-## Import Patterns
-
-- **Types**: Import from `@quartz-community/types`.
-- **Utils**: Import from `@quartz-community/utils`.
-- **Runtime**: Use `vfile` for content manipulation in transformers.
-
-## i18n Setup
-
-1. Add keys to `src/i18n/locales/en-US.ts`.
-2. Create other locales in `src/i18n/locales/`.
-3. Use the `i18n` helper in your plugin or component.
-
-## Common Mistakes
-
-- **Missing Exports**: Forgetting to export the plugin factory from `src/index.ts`.
-- **Wrong Category**: Not matching the `category` in `package.json` with the implemented hooks.
-- **Peer Dependencies**: Adding `preact` or `vfile` as `dependencies` instead of `peerDependencies`.
-- **Committing dist/**: The `dist/` directory is gitignored. npm packages ship pre-built; git sources build on install.
-- **Bundling native deps**: Plugins using `sharp`, `@napi-rs/*`, or other NAPI packages must exclude them from `noExternal`.
-
-## Testing Patterns
-
-Use `vitest`. Mock the `BuildCtx` and `ProcessedContent` when testing transformers or emitters.
-
-## Checklist Before Submission
-
-- [ ] `npm run build` completes without errors.
-- [ ] `npm test` passes all cases.
-- [ ] `npm run build` output is correct (CI builds from source).
-- [ ] `package.json` manifest is complete and accurate.
-- [ ] `README.md` documents all options.
-
-## Build System Quirks
-
-- **SINGLETON_EXTERNALS**: `SINGLETON_EXTERNALS` in `tsup.config.ts` defines packages that must NOT be bundled — they must be the same instance across all plugins (`preact`, `vfile`, `unified`, `@jackyzha0/quartz`). Everything else is bundled into `dist/`.
-- **.inline.ts**: Files ending in `.inline.ts` are bundled as raw strings for client-side injection.
-- **.scss**: Styles are compiled to CSS strings and attached to components via `Component.css`.
-- **Branded Types**: Use `FullSlug` and `FilePath` from `@quartz-community/types` for path safety.
+- Quartz calls the component constructor with the raw YAML `options`; manifest `defaultOptions`
+  are not merged in. Keep defaults in `LayoutBox.tsx`.
+- Import `@quartz-community/utils` via subpaths (`/lang`, `/escape`); the root index pulls in
+  packages that are not installed here.
+- No client-side script is needed; if one is ever added, follow Quartz's `nav`/`addCleanup` rules
+  and the `.inline.ts` loader in `tsup.config.ts`.
+- `preact` and `vfile` stay peerDependencies; everything else is bundled.

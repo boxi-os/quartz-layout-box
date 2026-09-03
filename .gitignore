@@ -39,3 +39,7 @@ coverage/
 # Cache
 .cache/
 .eslintcache
+
+# Claude: lokal verlinkte Skills (Symlinks mit absoluten Pfaden, nicht teambar)
+.claude/skills/firecrawl*
+.claude/settings.local.json

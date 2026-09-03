@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>quartz-layout-box – Dokumentation</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 18mm 18mm 20mm 18mm;
+      }
+      html {
+        font-size: 10.5pt;
+      }
+      body {
+        font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: #1f2328;
+        line-height: 1.45;
+        margin: 0;
+      }
+      h1 {
+        font-size: 24pt;
+        margin: 0 0 4pt 0;
+      }
+      .subtitle {
+        color: #57606a;
+        margin: 0 0 18pt 0;
+        font-size: 11pt;
+      }
+      h2 {
+        font-size: 15pt;
+        margin: 22pt 0 8pt 0;
+        padding-bottom: 3pt;
+        border-bottom: 1px solid #d0d7de;
+        page-break-after: avoid;
+      }
+      h3 {
+        font-size: 12pt;
+        margin: 14pt 0 5pt 0;
+        page-break-after: avoid;
+      }
+      p {
+        margin: 0 0 7pt 0;
+      }
+      ul,
+      ol {
+        margin: 0 0 8pt 0;
+        padding-left: 18pt;
+      }
+      li {
+        margin-bottom: 2pt;
+      }
+      code {
+        font-family: "SF Mono", Menlo, Consolas, monospace;
+        font-size: 9pt;
+        background: #f6f8fa;
+        padding: 1px 3px;
+        border-radius: 3px;
+      }
+      pre {
+        font-family: "SF Mono", Menlo, Consolas, monospace;
+        font-size: 8.8pt;
+        background: #f6f8fa;
+        border: 1px solid #d0d7de;
+        border-radius: 4px;
+        padding: 7pt 9pt;
+        white-space: pre-wrap;
+        margin: 4pt 0 9pt 0;
+        page-break-inside: avoid;
+      }
+      pre code {
+        background: none;
+        padding: 0;
+        font-size: inherit;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 4pt 0 10pt 0;
+        font-size: 9.3pt;
+        page-break-inside: auto;
+      }
+      th,
+      td {
+        border: 1px solid #d0d7de;
+        padding: 4pt 6pt;
+        vertical-align: top;
+        text-align: left;
+      }
+      th {
+        background: #f6f8fa;
+      }
+      tr {
+        page-break-inside: avoid;
+      }
+      .box {
+        border: 1px solid #d0d7de;
+        border-left: 4px solid #0969da;
+        background: #f6f8fa;
+        padding: 6pt 9pt;
+        margin: 6pt 0 10pt 0;
+        page-break-inside: avoid;
+      }
+      .warn {
+        border-left-color: #bf8700;
+      }
+      .toc {
+        columns: 2;
+        column-gap: 20pt;
+        font-size: 9.5pt;
+        margin-bottom: 6pt;
+      }
+      .toc ol {
+        margin: 0;
+        padding-left: 16pt;
+      }
+      .flow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6pt;
+        margin: 6pt 0 10pt 0;
+      }
+      .flow .step {
+        border: 1px solid #d0d7de;
+        border-radius: 4px;
+        padding: 5pt 8pt;
+        background: #fff;
+        font-size: 9pt;
+        flex: 1 1 28%;
+      }
+      .flow .step b {
+        display: block;
+        margin-bottom: 2pt;
+      }
+      .footer {
+        margin-top: 24pt;
+        color: #57606a;
+        font-size: 8.5pt;
+        border-top: 1px solid #d0d7de;
+        padding-top: 6pt;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>quartz-layout-box</h1>
+    <p class="subtitle">
+      Dokumentation · Version 0.2.0 · Stand 3. September 2026 · Quartz&nbsp;5 Community-Plugin
+    </p>
+
+    <div class="toc">
+      <ol>
+        <li>Was das Plugin macht</li>
+        <li>Funktionsweise</li>
+        <li>Installation und Einbindung</li>
+        <li>Optionen</li>
+        <li>Platzhalter</li>
+        <li>Steuerung per Frontmatter</li>
+        <li>Markdown-Snippets</li>
+        <li>Titel und aufklappbare Box</li>
+        <li>Markup und Styling</li>
+        <li>Verhalten bei Fehlern</li>
+        <li>Mehrere Instanzen</li>
+        <li>Umstieg von Version 0.1</li>
+        <li>Entwicklung</li>
+      </ol>
+    </div>
+
+    <h2>1. Was das Plugin macht</h2>
+    <p>
+      Die Layout-Box fügt an einer beliebigen Stelle des Quartz-Layouts ein Stück HTML ein: in der
+      linken oder rechten Seitenleiste, im Header, im Footer oder vor beziehungsweise nach dem
+      Seiteninhalt. Typische Einsatzfälle sind ein Titelblock mit Logo, ein Untertitel, ein
+      Hinweiskasten, ein Spenden- oder Newsletter-Link oder eine kurze Beschreibung der Site.
+    </p>
+    <p>
+      Der Inhalt kommt aus einer Snippet-Datei im Ordner <code>quartz/static/snippets/</code> der
+      Site oder direkt aus der <code>quartz.config.yaml</code>. Snippets können HTML oder Markdown
+      sein. Beim Rendern werden Platzhalter wie <code>{{siteTitle}}</code> ersetzt. Das Plugin
+      arbeitet vollständig zur Build-Zeit und liefert kein JavaScript an den Browser aus.
+    </p>
+
+    <h2>2. Funktionsweise</h2>
+    <p>
+      Quartz lädt das Plugin als reine Komponente. Für jeden Eintrag in der
+      <code>quartz.config.yaml</code>, der einen <code>layout</code>-Block besitzt, wird eine eigene
+      Instanz mit den dort angegebenen Optionen erzeugt. Beim Bau jeder Seite läuft dann folgender
+      Ablauf:
+    </p>
+    <div class="flow">
+      <div class="step">
+        <b>1. Frontmatter prüfen</b>Ist die Box für diese Seite ausgeblendet oder wurde ein anderes
+        Snippet gewählt?
+      </div>
+      <div class="step">
+        <b>2. Quelle bestimmen</b>Inline-HTML aus der Konfiguration hat Vorrang, sonst die Datei
+        <code>dir/file</code>.
+      </div>
+      <div class="step">
+        <b>3. Datei lesen</b>Der Pfad muss innerhalb von <code>dir</code> liegen. Gelesen wird mit
+        Cache: nur wenn sich die Änderungszeit der Datei geändert hat, wird sie neu geladen.
+      </div>
+      <div class="step">
+        <b>4. Markdown rendern</b>Endet die Datei auf <code>.md</code>, wird sie zu HTML
+        umgewandelt. Das Ergebnis landet ebenfalls im Cache.
+      </div>
+      <div class="step">
+        <b>5. Platzhalter ersetzen</b>Seiten- und Site-Werte werden eingesetzt, HTML-Sonderzeichen
+        dabei maskiert.
+      </div>
+      <div class="step">
+        <b>6. Markup ausgeben</b>Ein <code>div</code> mit Klasse <code>layout-box</code>, optional
+        mit Überschrift oder als aufklappbares <code>details</code>-Element.
+      </div>
+    </div>
+    <div class="box">
+      Weil die Datei bei jedem Render gegen ihre Änderungszeit geprüft wird, greifen Änderungen am
+      Snippet im Modus <code>npx quartz build --serve</code> sofort, ohne Neustart. Im normalen
+      Build kostet das pro Seite nur einen Dateisystem-Stat.
+    </div>
+
+    <h2>3. Installation und Einbindung</h2>
+    <pre><code>npx quartz plugin add github:boxi-os/quartz-layout-box</code></pre>
+    <p>
+      Danach ein Snippet anlegen, zum Beispiel <code>quartz/static/snippets/snippet.html</code>, und
+      das Plugin in der <code>quartz.config.yaml</code> eintragen. Der <code>layout</code>-Block
+      bestimmt, wo die Box erscheint:
+    </p>
+    <pre><code>plugins:
+  - source: github:boxi-os/quartz-layout-box
+    enabled: true
+    options:
+      file: snippet.html
+    layout:
+      position: left        # left | right | header | footer | beforeBody | afterBody
+      priority: 15          # Reihenfolge innerhalb der Position, kleiner = weiter oben
+      display: desktop-only # all | desktop-only | mobile-only</code></pre>
+    <p>
+      Ohne <code>options</code> gelten die Standardwerte: Datei <code>snippet.html</code> im Ordner
+      <code>quartz/static/snippets</code>.
+    </p>
+
+    <h2>4. Optionen</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 17%">Option</th>
+          <th style="width: 11%">Typ</th>
+          <th style="width: 22%">Standard</th>
+          <th>Beschreibung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>file</code></td>
+          <td>string</td>
+          <td><code>snippet.html</code></td>
+          <td>
+            Dateiname des Snippets innerhalb von <code>dir</code>. Dateien mit Endung
+            <code>.md</code> werden als Markdown gerendert. Wird ignoriert, wenn
+            <code>html</code> gesetzt ist.
+          </td>
+        </tr>
+        <tr>
+          <td><code>dir</code></td>
+          <td>string</td>
+          <td><code>quartz/static/snippets</code></td>
+          <td>
+            Ordner für Snippet-Dateien, relativ zur Wurzel der Quartz-Site. Pfade, die aus diesem
+            Ordner hinausführen, werden abgelehnt.
+          </td>
+        </tr>
+        <tr>
+          <td><code>html</code></td>
+          <td>string</td>
+          <td>–</td>
+          <td>
+            HTML direkt in der Konfiguration. Hat Vorrang vor <code>file</code>. Praktisch für
+            Einzeiler.
+          </td>
+        </tr>
+        <tr>
+          <td><code>className</code></td>
+          <td>string</td>
+          <td>–</td>
+          <td>
+            Zusätzliche CSS-Klasse(n) neben der festen Klasse <code>layout-box</code>. Damit lassen
+            sich mehrere Instanzen getrennt stylen.
+          </td>
+        </tr>
+        <tr>
+          <td><code>title</code></td>
+          <td>string</td>
+          <td>–</td>
+          <td>
+            Überschrift über dem Inhalt, gerendert als <code>h3</code> wie bei anderen
+            Sidebar-Komponenten.
+          </td>
+        </tr>
+        <tr>
+          <td><code>collapsible</code></td>
+          <td>boolean</td>
+          <td><code>false</code></td>
+          <td>
+            Box als aufklappbares <code>details</code>-Element rendern. <code>title</code> wird zur
+            Zeile, auf die man klickt. Ohne <code>title</code> wird die Option mit einer Warnung
+            ignoriert.
+          </td>
+        </tr>
+        <tr>
+          <td><code>collapsed</code></td>
+          <td>boolean</td>
+          <td><code>false</code></td>
+          <td>Box beim Laden zugeklappt anzeigen. Nur zusammen mit <code>collapsible</code>.</td>
+        </tr>
+        <tr>
+          <td><code>placeholders</code></td>
+          <td>boolean</td>
+          <td><code>true</code></td>
+          <td>
+            Platzhalter der Form <code>{{name}}</code> im Snippet ersetzen. Mit
+            <code>false</code> bleibt der Text unverändert.
+          </td>
+        </tr>
+        <tr>
+          <td><code>frontmatterKey</code></td>
+          <td>string</td>
+          <td><code>layoutBox</code></td>
+          <td>
+            Name des Frontmatter-Feldes, über das eine einzelne Seite die Box steuern kann (siehe
+            Abschnitt 6).
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Beispiel mit Inline-HTML, Titel und Aufklappen:</p>
+    <pre><code>options:
+  title: Hinweis
+  collapsible: true
+  collapsed: true
+  html: |
+    &lt;p&gt;Diese Site befindet sich im Aufbau.&lt;/p&gt;</code></pre>
+
+    <h2>5. Platzhalter</h2>
+    <p>
+      Platzhalter werden auf jeder Seite neu ersetzt, die Werte werden HTML-maskiert. Unbekannte
+      Platzhalter bleiben unverändert stehen. Leerzeichen innerhalb der Klammern sind erlaubt.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 28%">Platzhalter</th>
+          <th>Wert</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>{{title}}</code></td>
+          <td>Titel der aktuellen Seite aus dem Frontmatter</td>
+        </tr>
+        <tr>
+          <td><code>{{slug}}</code></td>
+          <td>Slug der aktuellen Seite, zum Beispiel <code>notizen/meine-seite</code></td>
+        </tr>
+        <tr>
+          <td><code>{{root}}</code></td>
+          <td>
+            Relativer Pfad zur Wurzel der Site (<code>.</code> auf der Startseite,
+            <code>../..</code> zwei Ebenen tiefer). Funktioniert auch, wenn die Site unter einem
+            Unterpfad liegt.
+          </td>
+        </tr>
+        <tr>
+          <td><code>{{siteTitle}}</code></td>
+          <td><code>configuration.pageTitle</code> aus der Quartz-Konfiguration</td>
+        </tr>
+        <tr>
+          <td><code>{{baseUrl}}</code></td>
+          <td><code>configuration.baseUrl</code>, kann leer sein</td>
+        </tr>
+        <tr>
+          <td><code>{{locale}}</code></td>
+          <td><code>configuration.locale</code>, zum Beispiel <code>de-DE</code></td>
+        </tr>
+        <tr>
+          <td><code>{{frontmatter.&lt;feld&gt;}}</code></td>
+          <td>
+            Beliebiges Frontmatter-Feld der Seite. Listen werden mit Komma verbunden, Objekte werden
+            nicht ersetzt.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Empfehlung: Links und Bildpfade im Snippet mit <code>{{root}}</code> statt mit absolutem
+      <code>/</code> schreiben.
+    </p>
+    <pre><code>&lt;h2&gt;&lt;a href="{{root}}/"&gt;{{siteTitle}}&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;Politische Notizen aus der Provinz&lt;/p&gt;
+&lt;img class="img-light" src="{{root}}/static/logo-light.png" alt="" /&gt;
+&lt;img class="img-dark"  src="{{root}}/static/logo-dark.png"  alt="" /&gt;</code></pre>
+
+    <h2>6. Steuerung per Frontmatter</h2>
+    <p>
+      Einzelne Seiten können die Box über ein Frontmatter-Feld beeinflussen. Der Feldname ist über
+      <code>frontmatterKey</code> einstellbar, Standard ist <code>layoutBox</code>.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 38%">Frontmatter</th>
+          <th>Wirkung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <pre style="margin: 0"><code>layoutBox: false</code></pre>
+          </td>
+          <td>Box auf dieser Seite ausblenden.</td>
+        </tr>
+        <tr>
+          <td>
+            <pre style="margin: 0"><code>layoutBox: impressum.html</code></pre>
+          </td>
+          <td>Anderes Snippet verwenden, relativ zu <code>dir</code>.</td>
+        </tr>
+        <tr>
+          <td>
+            <pre style="margin: 0"><code>layoutBox:
+  html: "&lt;p&gt;Nur hier&lt;/p&gt;"</code></pre>
+          </td>
+          <td>
+            Inline-HTML nur für diese Seite. Alternativ <code>file:</code> für eine andere Datei
+            oder <code>hidden: true</code> zum Ausblenden.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Bei mehreren Instanzen bekommt jede ihren eigenen <code>frontmatterKey</code>, zum Beispiel
+      <code>layoutBox</code> und <code>layoutBoxMobile</code>, damit sie unabhängig voneinander
+      gesteuert werden können.
+    </p>
+
+    <h2>7. Markdown-Snippets</h2>
+    <p>
+      Endet <code>file</code> auf <code>.md</code>, wird die Datei beim Build mit Standard-Markdown
+      gerendert (GitHub Flavored Markdown, eingebettetes HTML erlaubt). Platzhalter funktionieren
+      auch hier.
+    </p>
+    <pre><code>## {{siteTitle}}
+
+Politische Notizen aus der *Provinz*.
+
+- [Über diese Site]({{root}}/ueber)
+- [Kontakt]({{root}}/kontakt)</code></pre>
+    <div class="box warn">
+      Markdown-Snippets laufen nicht durch die Quartz-Inhaltspipeline. Wikilinks in doppelten
+      eckigen Klammern, Callouts und andere Obsidian-Syntax werden dort nicht aufgelöst. Normale
+      Markdown-Links funktionieren.
+    </div>
+
+    <h2>8. Titel und aufklappbare Box</h2>
+    <p>
+      Mit <code>title</code> erhält die Box eine Überschrift. Mit
+      <code>collapsible: true</code> wird sie zu einem aufklappbaren Element, bei dem der Titel als
+      Klickzeile dient. <code>collapsed: true</code> startet zugeklappt. Das funktioniert ohne
+      JavaScript über das HTML-Element <code>details</code>; der Browser merkt sich den Zustand
+      nicht über Seitenwechsel hinweg.
+    </p>
+
+    <h2>9. Markup und Styling</h2>
+    <p>Das Plugin bringt nur minimale, farblose Regeln mit. Das erzeugte Markup:</p>
+    <pre><code>&lt;div class="layout-box [className]"&gt;
+  &lt;h3 class="layout-box-title"&gt;…&lt;/h3&gt;          &lt;!-- nur mit title --&gt;
+  &lt;div class="layout-box-content"&gt;…Snippet…&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- mit collapsible: --&gt;
+&lt;details class="layout-box [className]" open&gt;
+  &lt;summary class="layout-box-title"&gt;…&lt;/summary&gt;
+  &lt;div class="layout-box-content"&gt;…Snippet…&lt;/div&gt;
+&lt;/details&gt;</code></pre>
+    <p>Gestaltet wird in der <code>quartz/styles/custom.scss</code> der Site. Beispiel:</p>
+    <pre><code>.layout-box h2 { margin: 0; font-size: 1.9rem; }
+.layout-box p  { font-style: italic; color: var(--dark); }
+.layout-box-mobile { text-align: center; }</code></pre>
+    <p>
+      Mitgelieferte Regeln: Bilder werden auf die Breite der Box begrenzt. Bilder mit Klasse
+      <code>img-light</code> erscheinen nur im hellen, Bilder mit <code>img-dark</code> nur im
+      dunklen Theme. Eine fehlende Snippet-Datei wird im Serve-Modus als gestrichelter Kasten
+      dargestellt (Klasse <code>layout-box-missing</code>).
+    </p>
+
+    <h2>10. Verhalten bei Fehlern</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 34%">Situation</th>
+          <th>Verhalten</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Snippet-Datei fehlt</td>
+          <td>
+            Einmalige Warnung in der Konsole mit vollständigem Pfad. Im normalen Build wird nichts
+            ausgegeben. Bei <code>quartz build --serve</code> erscheint an der Stelle ein
+            gestrichelter Kasten mit dem erwarteten Pfad.
+          </td>
+        </tr>
+        <tr>
+          <td>Pfad führt aus <code>dir</code> hinaus (z. B. <code>../secret.html</code>)</td>
+          <td>Wird abgelehnt, Warnung, keine Ausgabe.</td>
+        </tr>
+        <tr>
+          <td>Snippet ist leer</td>
+          <td>Keine Ausgabe, auch kein leeres <code>div</code>.</td>
+        </tr>
+        <tr>
+          <td><code>collapsible</code> ohne <code>title</code></td>
+          <td>Warnung, Box wird normal ohne Aufklappen gerendert.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="box warn">
+      Snippets werden ungefiltert als HTML eingefügt. Nur Dateien verwenden, die man selbst
+      kontrolliert.
+    </div>
+
+    <h2>11. Mehrere Instanzen</h2>
+    <p>
+      Das Plugin kann mehrfach eingebunden werden, etwa mit unterschiedlichen Snippets für Desktop
+      und Mobil. Jede Instanz bekommt eigene Optionen und einen eigenen <code>layout</code>-Block:
+    </p>
+    <pre><code>plugins:
+  - source: github:boxi-os/quartz-layout-box
+    enabled: true
+    options:
+      file: snippet.html
+    layout:
+      position: left
+      priority: 15
+      display: desktop-only
+  - source: github:boxi-os/quartz-layout-box
+    enabled: true
+    options:
+      file: snippet-mobile.html
+      className: layout-box-mobile
+      frontmatterKey: layoutBoxMobile
+    layout:
+      position: left
+      priority: 15
+      display: mobile-only</code></pre>
+
+    <h2>12. Umstieg von Version 0.1</h2>
+    <ul>
+      <li>
+        Die Option <code>datei</code> heißt jetzt <code>file</code>. Bestehende
+        <code>quartz.config.yaml</code>-Einträge entsprechend anpassen.
+      </li>
+      <li>
+        Das Plugin ist jetzt als reine Komponente deklariert. Der Beispiel-Transformer der Vorlage,
+        der vorher ungewollt auf allen Seiten lief, ist entfernt.
+      </li>
+      <li>
+        Die Regeln für <code>img-light</code> und <code>img-dark</code> liefert das Plugin jetzt
+        selbst mit. Eigene Regeln dazu in der <code>custom.scss</code> können entfallen.
+      </li>
+      <li>
+        Nach dem Aktualisieren des Plugins in der Site neu installieren, damit Quartz das geänderte
+        Manifest liest.
+      </li>
+    </ul>
+
+    <h2>13. Entwicklung</h2>
+    <pre><code>npm install
+npm run check   # Typprüfung, Lint, Formatierung, Tests
+npm run build   # erzeugt dist/ (wird committed, Quartz installiert daraus)</code></pre>
+    <p>
+      Nach jeder Änderung unter <code>src/</code> muss <code>npm run build</code> laufen und das
+      aktualisierte <code>dist/</code> mit committed werden. Die wichtigsten Dateien:
+      <code>src/components/LayoutBox.tsx</code> (Komponente),
+      <code>src/placeholders.ts</code> (Platzhalter),
+      <code>src/markdown.ts</code> (Markdown-Rendering), <code>src/types.ts</code> (Optionen),
+      <code>package.json</code> (Quartz-Manifest im Feld <code>quartz</code>).
+    </p>
+
+    <p class="footer">
+      quartz-layout-box 0.2.0 · https://github.com/boxi-os/quartz-layout-box · Lizenz MIT
+    </p>
+  </body>
+</html>

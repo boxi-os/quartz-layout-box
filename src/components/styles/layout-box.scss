@@ -1,0 +1,41 @@
+.layout-box {
+  width: 100%;
+
+  & > :first-child {
+    margin-top: 0;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  .img-dark {
+    display: none;
+  }
+}
+
+:root[saved-theme="dark"] .layout-box {
+  .img-light {
+    display: none;
+  }
+
+  .img-dark {
+    display: block;
+  }
+}
+
+.layout-box-title {
+  margin: 0 0 0.5rem 0;
+}
+
+summary.layout-box-title {
+  cursor: pointer;
+}
+
+.layout-box-missing {
+  padding: 0.5rem;
+  border: 1px dashed var(--gray);
+  border-radius: 5px;
+  font-size: 0.8rem;
+  color: var(--gray);
+}

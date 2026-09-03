@@ -1,321 +1,168 @@
-# Quartz Community Plugin Template
+# quartz-layout-box
 
-Production-ready template for building, testing, and publishing Quartz community plugins. It mirrors
-Quartz's native plugin patterns and uses a factory-function API similar to Astro integrations:
-plugins are created by functions that return objects with `name` and lifecycle hooks.
+A [Quartz v5](https://quartz.jzhao.xyz) component plugin that renders an HTML or Markdown snippet
+anywhere in the page layout: sidebar, header, footer, before or after the body. Use it for a site
+title block, a logo, a call-to-action, a notice, or any small piece of static markup you don't want
+to hard-code into a theme.
 
-## Highlights
+- Snippet from a file (`quartz/static/snippets/` by default) or inline in `quartz.config.yaml`
+- Markdown snippets (`.md`) are rendered at build time
+- `{{placeholders}}` for page title, slug, site title, root path and frontmatter values
+- Optional heading and collapsible `<details>` box, no client-side JavaScript
+- Per-page control via frontmatter (hide the box or switch the snippet)
+- Snippet changes are picked up in `quartz build --serve` without a restart
+- Light/dark image switching via `.img-light` / `.img-dark`
 
-- ✅ Quartz-compatible transformer/filter/emitter examples
-- ✅ TypeScript-first with exported types for consumers
-- ✅ `tsup` bundling + declaration output
-- ✅ Pre-built `dist/` ships in the repo — instant installation for users
-- ✅ Vitest testing setup with example tests
-- ✅ Linting/formatting with ESLint + Prettier
-- ✅ CI workflow for checks and npm publishing
-- ✅ Demonstrates CSS/JS resource injection and remark/rehype usage
+## Installation
 
-## Getting started
+```bash
+npx quartz plugin add github:boxi-os/quartz-layout-box
+```
+
+Create the default snippet at `quartz/static/snippets/snippet.html` in your site, then add the
+plugin to `quartz.config.yaml`. The plugin can be added more than once with different options:
+
+```yaml
+plugins:
+  - source: github:boxi-os/quartz-layout-box
+    enabled: true
+    options:
+      file: snippet.html
+    layout:
+      position: left
+      priority: 15
+      display: desktop-only
+  - source: github:boxi-os/quartz-layout-box
+    enabled: true
+    options:
+      file: snippet-mobile.html
+      className: layout-box-mobile
+    layout:
+      position: left
+      priority: 15
+      display: mobile-only
+```
+
+## Options
+
+| Option           | Type      | Default                    | Description                                                                    |
+| ---------------- | --------- | -------------------------- | ------------------------------------------------------------------------------ |
+| `file`           | `string`  | `"snippet.html"`           | Snippet filename inside `dir`. Files ending in `.md` are rendered as Markdown. |
+| `dir`            | `string`  | `"quartz/static/snippets"` | Snippet directory, relative to the site root. Files outside it are refused.    |
+| `html`           | `string`  | –                          | Inline HTML. Takes precedence over `file`.                                     |
+| `className`      | `string`  | –                          | Extra class(es) added next to the fixed `layout-box` class.                    |
+| `title`          | `string`  | –                          | Heading (`h3`) rendered above the content.                                     |
+| `collapsible`    | `boolean` | `false`                    | Render as `<details>` with `title` as the summary. Requires `title`.           |
+| `collapsed`      | `boolean` | `false`                    | Start collapsed (only with `collapsible`).                                     |
+| `placeholders`   | `boolean` | `true`                     | Replace `{{...}}` tokens in the snippet.                                       |
+| `frontmatterKey` | `string`  | `"layoutBox"`              | Frontmatter key used for per-page control.                                     |
+
+Inline HTML example:
+
+```yaml
+options:
+  title: Note
+  collapsible: true
+  html: |
+    <p>This site is a work in progress.</p>
+```
+
+## Placeholders
+
+Placeholders are replaced on every page and HTML-escaped. Unknown placeholders are left as-is.
+
+| Placeholder             | Value                                                                   |
+| ----------------------- | ----------------------------------------------------------------------- |
+| `{{title}}`             | Page title from frontmatter                                             |
+| `{{slug}}`              | Page slug, e.g. `notes/my-page`                                         |
+| `{{root}}`              | Relative path to the site root (`.` or `../..`), safe for sub-paths     |
+| `{{siteTitle}}`         | `configuration.pageTitle`                                               |
+| `{{baseUrl}}`           | `configuration.baseUrl` (may be empty)                                  |
+| `{{locale}}`            | `configuration.locale`                                                  |
+| `{{frontmatter.<key>}}` | Any frontmatter value; arrays are joined with `, `, objects are skipped |
+
+Use `{{root}}` instead of absolute links so the snippet keeps working when the site is served from
+a sub-path:
+
+```html
+<h2><a href="{{root}}/">{{siteTitle}}</a></h2>
+<img class="img-light" src="{{root}}/static/logo-light.png" alt="" />
+<img class="img-dark" src="{{root}}/static/logo-dark.png" alt="" />
+```
+
+## Per-page control via frontmatter
+
+```yaml
+---
+layoutBox: false # hide the box on this page
+---
+```
+
+```yaml
+---
+layoutBox: about-box.html # use a different snippet (relative to `dir`)
+---
+```
+
+```yaml
+---
+layoutBox:
+  html: "<p>Inline HTML for this page only</p>"
+  # or: file: other.html
+  # or: hidden: true
+---
+```
+
+With two instances, give each its own `frontmatterKey` (for example `layoutBox` and
+`layoutBoxMobile`) to control them separately.
+
+## Markdown snippets
+
+If `file` ends in `.md`, the snippet is rendered with standard Markdown (GitHub Flavored Markdown,
+inline HTML allowed). It does not go through the Quartz content pipeline, so wikilinks, callouts and
+other Obsidian syntax are not supported there.
+
+## Styling
+
+The plugin ships only minimal, colorless styles. The rendered markup is:
+
+```html
+<div class="layout-box [className]">
+  <h3 class="layout-box-title">…</h3>
+  <div class="layout-box-content">…snippet…</div>
+</div>
+```
+
+or, when `collapsible` is set, a `<details class="layout-box">` with a `<summary class="layout-box-title">`.
+Style it from your site's `quartz/styles/custom.scss`, for example:
+
+```scss
+.layout-box h2 {
+  margin: 0;
+}
+.layout-box-mobile {
+  text-align: center;
+}
+```
+
+Images with class `img-light` are shown in the light theme, `img-dark` in the dark theme.
+
+## Notes
+
+- Snippets are inserted as raw HTML without sanitizing. Only use files you control.
+- If a snippet file is missing, the build logs a warning once and renders nothing. In
+  `quartz build --serve` a dashed placeholder with the expected path is shown instead.
+
+## Development
 
 ```bash
 npm install
-npm run build
+npm run check   # typecheck + lint + format + tests
+npm run build   # writes dist/ (committed, Quartz installs from it)
 ```
 
-> [!important]
-> After building, the `dist/` directory should be committed to the repository. It is not gitignored, as Quartz uses it for pre-built distribution.
-
-## Build and Distribution
-
-The template is configured to bundle all dependencies by default via `noExternal: [/.*/]` in `tsup.config.ts`. This ensures that users don't need to install any dependencies when using your plugin.
-
-- **Singleton Externals**: Certain packages (`preact`, `vfile`, `unified`, `@jackyzha0/quartz`) are kept external to ensure only one instance of them exists across all plugins.
-- **Native Dependencies**: If your plugin uses native dependencies (like `sharp`, `@napi-rs/simple-git`, etc.), you must exclude them from bundling. Use a regex pattern in `noExternal` to exclude them, for example: `noExternal: [/^(?!sharp)/]`.
-- **CI Verification**: The included CI workflow verifies that `dist/` is up to date on every push.
-
-## Usage in Quartz
-
-Install your plugin into a Quartz v5 site:
-
-```bash
-npx quartz plugin add github:quartz-community/plugin-template
-```
-
-Then register it in `quartz.config.yaml`:
-
-```yaml
-plugins:
-  - source: github:quartz-community/plugin-template
-    enabled: true
-    options:
-      highlightToken: "=="
-```
-
-If you need to use the plugin in `quartz.ts` for advanced overrides:
-
-```ts
-import * as ExternalPlugin from "./.quartz/plugins";
-
-export default {
-  plugins: {
-    transformers: [ExternalPlugin.ExampleTransformer({ highlightToken: "==" })],
-  },
-};
-```
-
-## Plugin factory pattern (Astro-style)
-
-Quartz plugins are factory functions that return an object with a `name` and hook implementations.
-This mirrors Astro's integration pattern (a function returning an object of hooks), which makes
-composition and configuration explicit and predictable.
-
-```ts
-import type { QuartzTransformerPlugin } from "@quartz-community/types";
-
-export const MyTransformer: QuartzTransformerPlugin<{ enabled: boolean }> = (opts) => {
-  return {
-    name: "MyTransformer",
-    markdownPlugins() {
-      return [];
-    },
-  };
-};
-```
-
-## Examples included
-
-### Transformer
-
-`ExampleTransformer` shows how to:
-
-- apply a custom remark plugin
-- run a rehype plugin
-- inject CSS/JS resources
-- perform a text transform hook
-
-```ts
-import { ExampleTransformer } from "@quartz-community/plugin-template";
-
-ExampleTransformer({
-  highlightToken: "==",
-  headingClass: "example-plugin-heading",
-  enableGfm: true,
-  addHeadingSlugs: true,
-});
-```
-
-The transformer uses a custom remark plugin to convert `==highlight==` into bold text and a rehype
-plugin to attach a class to all headings. It also injects a small inline CSS/JS snippet.
-
-### Filter
-
-`ExampleFilter` demonstrates frontmatter-driven filtering:
-
-```ts
-ExampleFilter({
-  allowDrafts: false,
-  excludeTags: ["private", "wip"],
-  excludePathPrefixes: ["_drafts/", "_private/"],
-});
-```
-
-### Emitter
-
-`ExampleEmitter` emits a JSON manifest of all pages:
-
-```ts
-ExampleEmitter({
-  manifestSlug: "plugin-manifest",
-  includeFrontmatter: true,
-  metadata: { project: "My Garden" },
-  transformManifest: (json) => json.replace("My Garden", "Quartz"),
-});
-```
-
-## API reference
-
-### `ExampleTransformer(options)`
-
-| Option            | Type      | Default                    | Description                   |
-| ----------------- | --------- | -------------------------- | ----------------------------- |
-| `highlightToken`  | `string`  | `"=="`                     | Token used to highlight text. |
-| `headingClass`    | `string`  | `"example-plugin-heading"` | Class added to headings.      |
-| `enableGfm`       | `boolean` | `true`                     | Enables `remark-gfm`.         |
-| `addHeadingSlugs` | `boolean` | `true`                     | Enables `rehype-slug`.        |
-
-### `ExampleFilter(options)`
-
-| Option                | Type       | Default                     | Description               |
-| --------------------- | ---------- | --------------------------- | ------------------------- |
-| `allowDrafts`         | `boolean`  | `false`                     | Publish draft pages.      |
-| `excludeTags`         | `string[]` | `["private"]`               | Tags to exclude.          |
-| `excludePathPrefixes` | `string[]` | `["_drafts/", "_private/"]` | Path prefixes to exclude. |
-
-### `ExampleEmitter(options)`
-
-| Option                | Type                       | Default                                   | Description                               |
-| --------------------- | -------------------------- | ----------------------------------------- | ----------------------------------------- |
-| `manifestSlug`        | `string`                   | `"plugin-manifest"`                       | Output filename (without extension).      |
-| `includeFrontmatter`  | `boolean`                  | `true`                                    | Include frontmatter in output.            |
-| `metadata`            | `Record<string, unknown>`  | `{ generator: "Quartz Plugin Template" }` | Extra metadata in manifest.               |
-| `transformManifest`   | `(json: string) => string` | `undefined`                               | Custom transformer for emitted JSON.      |
-| `manifestScriptClass` | `string`                   | `undefined`                               | Optional CSS class if rendered into HTML. |
-
-## Testing
-
-```bash
-npm test
-```
-
-## Build and lint
-
-```bash
-npm run build
-npm run lint
-npm run format
-```
-
-## Publishing
-
-This template uses [Changesets](https://github.com/changesets/changesets) for version management and publishing.
-
-1. Make your changes and create a changeset:
-
-   ```bash
-   npx changeset
-   ```
-
-   Select the bump type (patch/minor/major) and describe the change.
-
-2. Commit the changeset file along with your code changes.
-
-3. When merged to `main`, the Changesets GitHub Action will open a "Version Package" PR that bumps the version and updates the changelog.
-
-4. Merging the version PR automatically publishes to npm.
-
-Ensure `NPM_TOKEN` is set in the repository secrets (or as a GitHub org-level secret).
-
-## Component Plugins (UI Components)
-
-In addition to transformer/filter/emitter plugins, you can create **component plugins** that provide
-UI elements for Quartz layouts. See `src/components/ExampleComponent.tsx` for a reference.
-
-### Component Pattern
-
-```tsx
-import type { QuartzComponent, QuartzComponentConstructor } from "@quartz-community/types";
-import style from "./styles/example.scss";
-import script from "./scripts/example.inline.ts";
-
-export default ((opts?: MyComponentOptions) => {
-  const Component: QuartzComponent = (props) => {
-    return <div class="my-component">...</div>;
-  };
-
-  Component.css = style;
-  Component.afterDOMLoaded = script;
-
-  return Component;
-}) satisfies QuartzComponentConstructor;
-```
-
-### Receiving YAML Options in Component-Only Plugins
-
-Processing plugins (transformers, filters, emitters, page types) receive options automatically
-through their factory function. **Component-only plugins** (those with `"category": ["component"]`)
-are loaded via side-effect import and need an extra step to receive YAML options.
-
-Export an `init` function from your plugin's entry point. Quartz's config-loader will call it with
-the merged options from `package.json` `defaultOptions` and the user's `quartz.config.yaml`:
-
-```ts
-// src/index.ts
-export function init(options?: Record<string, unknown>): void {
-  // Use the options to configure your plugin
-  const myOption = (options?.myOption as boolean) ?? false;
-  // e.g. register a view, set global state, etc.
-}
-```
-
-Then declare default values in your `package.json` manifest:
-
-```json
-{
-  "quartz": {
-    "category": ["component"],
-    "defaultOptions": {
-      "myOption": false
-    }
-  }
-}
-```
-
-Users configure options in `quartz.config.yaml`:
-
-```yaml
-plugins:
-  - source: github:your-username/my-component-plugin
-    enabled: true
-    options:
-      myOption: true
-```
-
-Quartz merges `defaultOptions` with the user's `options` (user values take precedence) and passes
-the result to `init()`. If no `init` export exists, the plugin is loaded via side-effect import as
-before — no breaking change for existing plugins.
-
-### Client-Side Scripts
-
-Component scripts run in the browser and must handle Quartz's SPA navigation. Key patterns:
-
-1. **Use `@ts-nocheck`** - Client scripts run in a different context than build-time code
-2. **Listen to `nav` event** - Fires after each page navigation (including initial load)
-3. **Listen to `prenav` event** - Fires before navigation, use for saving state
-4. **Use `window.addCleanup()`** - Register cleanup functions for event listeners
-5. **Use `fetchData` global** - Access page metadata via the `fetchData` promise (handles base path correctly)
-
-See `src/components/scripts/example.inline.ts` for a complete example with all patterns.
-
-### Common Helper Functions
-
-These utilities are commonly needed in component plugins:
-
-```js
-function removeAllChildren(element) {
-  while (element.firstChild) element.removeChild(element.firstChild);
-}
-
-function simplifySlug(slug) {
-  return slug.endsWith("/index") ? slug.slice(0, -6) : slug;
-}
-
-function getCurrentSlug() {
-  let slug = window.location.pathname;
-  if (slug.startsWith("/")) slug = slug.slice(1);
-  if (slug.endsWith("/")) slug = slug.slice(0, -1);
-  return slug || "index";
-}
-```
-
-### State Persistence
-
-Use `localStorage` for persistent state (survives browser close) and `sessionStorage` for
-temporary state (like scroll positions):
-
-```js
-localStorage.setItem("myPlugin-state", JSON.stringify(state));
-sessionStorage.setItem("myPlugin-scrollTop", element.scrollTop.toString());
-```
-
-## Migration Guide (from Quartz v4)
-
-When migrating a v4 component to a standalone plugin:
-
-1. **Replace Quartz imports** with `@quartz-community/types`
-2. **Copy utility functions** (path helpers, DOM utils) into your plugin
-3. **Use `@ts-nocheck`** for inline scripts that can't be type-checked
-4. **Use the `fetchData` global** to access `contentIndex.json` with the correct base path
-5. **Test with both local and production builds**
+`dist/` is committed on purpose. After changing anything under `src/`, run `npm run build` and
+commit the updated `dist/`.
 
 ## License
 
