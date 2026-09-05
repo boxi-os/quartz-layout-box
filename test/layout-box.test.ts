@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -45,6 +45,12 @@ function contentHtml(node: VNode | null): string | undefined {
   if (!node) return undefined;
   const content = children(node).find((c) => c.props.dangerouslySetInnerHTML);
   return content?.props.dangerouslySetInnerHTML.__html;
+}
+
+function titleOf(node: VNode | null): string | undefined {
+  if (!node) return undefined;
+  const el = children(node).find((c) => c.type === "h3" || c.type === "summary");
+  return el?.props.children;
 }
 
 function write(name: string, text: string) {
@@ -150,5 +156,106 @@ describe("LayoutBox", () => {
     expect(html).toContain("<h2>Hi Page &lt;1&gt;</h2>");
     expect(html).toContain("<li>a</li>");
     expect(html).toContain("<span>raw</span>");
+  });
+
+  it("lets frontmatter override title, collapsible and collapsed", () => {
+    write("snippet.html", "<p>x</p>");
+    const props = makeProps({
+      fileData: {
+        slug: "a",
+        frontmatter: { layoutBox: { title: "Page title", collapsible: true, collapsed: true } },
+      },
+    });
+    const node = render({ title: "Base" }, props);
+    expect(node?.type).toBe("details");
+    expect(node?.props.open).toBe(false);
+    expect(children(node!)[0]?.props.children).toBe("Page title");
+  });
+
+  it("applies placeholders to the title without double escaping", () => {
+    write("snippet.html", "<p>x</p>");
+    const props = makeProps({
+      fileData: { slug: "a", frontmatter: { title: "A & B", boxTitle: "Box <1>" } },
+    });
+    const node = render({ title: "{{frontmatter.boxTitle}} / {{title}}" }, props);
+    expect(titleOf(node)).toBe("Box <1> / A & B");
+    expect(titleOf(render({ title: "{{title}}", placeholders: false }, props))).toBe("{{title}}");
+  });
+
+  describe("byLang", () => {
+    const withLang = (lang: unknown, extra: Record<string, unknown> = {}) =>
+      makeProps({
+        fileData: { slug: "a", frontmatter: { title: "T", lang, ...extra } },
+        cfg: { pageTitle: "Site", locale: "de-DE" },
+      });
+    const byLang = { en: { title: "About", file: "note.en.md" } };
+
+    beforeEach(() => {
+      write("note.md", "Über");
+      write("note.en.md", "About text");
+    });
+
+    it("overrides title and file on an exact match", () => {
+      const node = render({ title: "Über", file: "note.md", byLang }, withLang("en"));
+      expect(titleOf(node)).toBe("About");
+      expect(contentHtml(node)).toContain("About text");
+    });
+
+    it("matches the primary subtag and ignores case", () => {
+      const node = render({ title: "Über", file: "note.md", byLang }, withLang("en-US"));
+      expect(titleOf(node)).toBe("About");
+      expect(contentHtml(node)).toContain("About text");
+
+      const upper = render(
+        { title: "Über", file: "note.md", byLang: { EN: byLang.en } },
+        withLang("en"),
+      );
+      expect(titleOf(upper)).toBe("About");
+    });
+
+    it("keeps the base options when no entry matches", () => {
+      const node = render({ title: "Über", file: "note.md", byLang }, withLang("fr"));
+      expect(titleOf(node)).toBe("Über");
+      expect(contentHtml(node)).toContain("Über");
+    });
+
+    it("falls back to cfg.locale when the page has no lang", () => {
+      const props = makeProps({
+        fileData: { slug: "a", frontmatter: {} },
+        cfg: { pageTitle: "Site", locale: "en-US" },
+      });
+      expect(titleOf(render({ title: "Über", file: "note.md", byLang }, props))).toBe("About");
+    });
+
+    it("lets page frontmatter win over the language entry", () => {
+      const props = withLang("en", { layoutBox: { title: "Page", file: "note.md" } });
+      const node = render({ title: "Über", file: "note.md", byLang }, props);
+      expect(titleOf(node)).toBe("Page");
+      expect(contentHtml(node)).toContain("Über");
+    });
+
+    it("does not warn when collapsible and title live in the same byLang entry", () => {
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      try {
+        const node = render(
+          { file: "note.md", byLang: { en: { collapsible: true, title: "About" } } },
+          withLang("en"),
+        );
+        expect(node?.type).toBe("details");
+        expect(warn).not.toHaveBeenCalled();
+      } finally {
+        warn.mockRestore();
+      }
+    });
+
+    it("warns when a byLang entry makes the box collapsible without a title", () => {
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      try {
+        render({ file: "note.md", byLang: { fr: { collapsible: true } } }, withLang("fr"));
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining("byLang.fr"));
+      } finally {
+        warn.mockRestore();
+      }
+    });
   });
 });

@@ -26,6 +26,21 @@ describe("applyPlaceholders", () => {
     expect(applyPlaceholders(html, ctx)).toBe(html);
   });
 
+  it("resolves locale and lang from the page, falling back to the site locale", () => {
+    expect(applyPlaceholders("{{locale}}|{{lang}}", ctx)).toBe("de-DE|de");
+    const page = {
+      ...ctx,
+      fileData: { slug: "en/page", frontmatter: { lang: "en-US" } },
+    } as PlaceholderContext;
+    expect(applyPlaceholders("{{locale}}|{{lang}}", page)).toBe("en-US|en");
+    const none = { fileData: { slug: "x", frontmatter: {} } } as PlaceholderContext;
+    expect(applyPlaceholders("{{locale}}|{{lang}}", none)).toBe("{{locale}}|{{lang}}");
+  });
+
+  it("can skip escaping for callers that escape themselves", () => {
+    expect(applyPlaceholders("{{title}}", ctx, false)).toBe("Hello & <World>");
+  });
+
   it("returns root as '.' for top-level pages", () => {
     const top = { ...ctx, fileData: { slug: "index", frontmatter: {} } } as PlaceholderContext;
     expect(applyPlaceholders("{{root}}/static/x.png", top)).toBe("./static/x.png");

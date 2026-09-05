@@ -138,11 +138,12 @@ function escapeHTML(unsafe) {
 // src/placeholders.ts
 var PLACEHOLDER = /\{\{\s*([\w.-]+)\s*\}\}/g;
 var FRONTMATTER_PREFIX = "frontmatter.";
-function applyPlaceholders(html7, ctx) {
+function applyPlaceholders(html7, ctx, escape = true) {
   if (!html7.includes("{{")) return html7;
   return html7.replace(PLACEHOLDER, (match, name) => {
     const value = resolvePlaceholder(name, ctx);
-    return value === void 0 ? match : escapeHTML(value);
+    if (value === void 0) return match;
+    return escape ? escapeHTML(value) : value;
   });
 }
 function resolvePlaceholder(name, { fileData, cfg }) {
@@ -160,7 +161,9 @@ function resolvePlaceholder(name, { fileData, cfg }) {
     case "baseUrl":
       return cfg?.baseUrl ?? "";
     case "locale":
-      return cfg?.locale;
+      return stringify(frontmatter.lang) ?? cfg?.locale;
+    case "lang":
+      return (stringify(frontmatter.lang) ?? cfg?.locale)?.split(/[-_]/)[0];
   }
   if (name.startsWith(FRONTMATTER_PREFIX)) {
     return stringify(frontmatter[name.slice(FRONTMATTER_PREFIX.length)]);
@@ -23275,37 +23278,68 @@ function readFrontmatterControl(frontmatter, key2) {
     return {
       hidden: obj.hidden === true,
       file: typeof obj.file === "string" ? obj.file : void 0,
-      html: typeof obj.html === "string" ? obj.html : void 0
+      html: typeof obj.html === "string" ? obj.html : void 0,
+      title: typeof obj.title === "string" ? obj.title : void 0,
+      collapsible: typeof obj.collapsible === "boolean" ? obj.collapsible : void 0,
+      collapsed: typeof obj.collapsed === "boolean" ? obj.collapsed : void 0
     };
   }
   return {};
 }
+function normalizeByLang(map3) {
+  if (!map3) return void 0;
+  const normalized = {};
+  for (const [key2, entry] of Object.entries(map3)) {
+    normalized[key2.trim().toLowerCase()] = entry;
+  }
+  return normalized;
+}
+function optionsForPage(opts, props) {
+  const map3 = opts.byLang;
+  if (!map3) return opts;
+  const raw3 = props.fileData?.frontmatter?.lang;
+  const lang = String(raw3 ?? props.cfg?.locale ?? "").trim().toLowerCase();
+  if (!lang) return opts;
+  const hit = map3[lang] ?? map3[lang.split(/[-_]/)[0] ?? ""];
+  return hit ? { ...opts, ...hit } : opts;
+}
 var LayoutBox_default = ((userOpts) => {
-  const opts = { ...defaultOptions, ...userOpts };
-  if (opts.collapsible && !opts.title) {
-    warnOnce(
-      "collapsible-without-title",
-      "`collapsible` requires a `title`; rendering non-collapsible."
-    );
+  const opts = {
+    ...defaultOptions,
+    ...userOpts,
+    byLang: normalizeByLang(userOpts?.byLang)
+  };
+  const variants = [["", opts]];
+  for (const [lang, entry] of Object.entries(opts.byLang ?? {})) {
+    variants.push([lang, { ...opts, ...entry }]);
+  }
+  for (const [lang, variant] of variants) {
+    if (variant.collapsible && !variant.title) {
+      warnOnce(
+        `collapsible-without-title:${lang}`,
+        `\`collapsible\` requires a \`title\`${lang ? ` (byLang.${lang})` : ""}; rendering non-collapsible.`
+      );
+    }
   }
   const LayoutBox = (props) => {
     const { fileData, displayClass } = props;
     const control = readFrontmatterControl(fileData?.frontmatter, opts.frontmatterKey);
     if (control.hidden) return null;
+    const page = optionsForPage(opts, props);
     let html7;
-    const inline = control.html ?? opts.html;
+    const inline = control.html ?? page.html;
     if (inline !== void 0) {
       html7 = inline;
     } else {
-      const file = control.file ?? opts.file;
-      const absPath = resolveSnippetPath(opts.dir, file);
+      const file = control.file ?? page.file;
+      const absPath = resolveSnippetPath(page.dir, file);
       if (absPath === null) return null;
       const result = readSnippet(absPath);
       if (!result.ok) {
         warnOnce(`read:${absPath}`, `${result.reason}: ${absPath}`);
         const ctx = props.ctx;
         if (!ctx?.argv?.serve) return null;
-        return /* @__PURE__ */ jsxs("div", { class: classNames(displayClass, "layout-box", "layout-box-missing", opts.className), children: [
+        return /* @__PURE__ */ jsxs("div", { class: classNames(displayClass, "layout-box", "layout-box-missing", page.className), children: [
           "Layout Box: ",
           result.reason.toLowerCase(),
           ":",
@@ -23315,18 +23349,22 @@ var LayoutBox_default = ((userOpts) => {
       }
       html7 = result.html;
     }
-    if (opts.placeholders) html7 = applyPlaceholders(html7, props);
+    if (page.placeholders) html7 = applyPlaceholders(html7, props);
     if (html7.trim() === "") return null;
-    const boxClass = classNames(displayClass, "layout-box", opts.className);
+    let title = control.title ?? page.title;
+    if (title && page.placeholders) title = applyPlaceholders(title, props, false);
+    const collapsible = control.collapsible ?? page.collapsible;
+    const collapsed = control.collapsed ?? page.collapsed;
+    const boxClass = classNames(displayClass, "layout-box", page.className);
     const content3 = /* @__PURE__ */ jsx("div", { class: "layout-box-content", dangerouslySetInnerHTML: { __html: html7 } });
-    if (opts.collapsible && opts.title) {
-      return /* @__PURE__ */ jsxs("details", { class: boxClass, open: !opts.collapsed, children: [
-        /* @__PURE__ */ jsx("summary", { class: "layout-box-title", children: opts.title }),
+    if (collapsible && title) {
+      return /* @__PURE__ */ jsxs("details", { class: boxClass, open: !collapsed, children: [
+        /* @__PURE__ */ jsx("summary", { class: "layout-box-title", children: title }),
         content3
       ] });
     }
     return /* @__PURE__ */ jsxs("div", { class: boxClass, children: [
-      opts.title && /* @__PURE__ */ jsx("h3", { class: "layout-box-title", children: opts.title }),
+      title && /* @__PURE__ */ jsx("h3", { class: "layout-box-title", children: title }),
       content3
     ] });
   };

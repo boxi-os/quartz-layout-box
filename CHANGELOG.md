@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `byLang` option: per-language overrides (`title`, `file`, `html`, `collapsible`, …) keyed by
+  language code or locale, chosen by the page's `lang` frontmatter field (fallback:
+  `configuration.locale`). Matching is case-insensitive, exact locale first, then the primary
+  subtag. `dir` and `frontmatterKey` are not overridable per language.
+- Per-page frontmatter control now also accepts `title`, `collapsible` and `collapsed`.
+- `title` goes through placeholder replacement like the snippet content (when `placeholders` is on).
+- `{{lang}}` placeholder: the primary subtag of the page's locale (`en` for `en-US`).
+
 ### Fixed
 
 - The build inlined its own copy of Preact and vfile: `noExternal: [/.*/]` in `tsup.config.ts` is
@@ -18,6 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- `{{locale}}` now resolves to the page's `lang` frontmatter field when present and only falls back
+  to `configuration.locale`. On a site that sets `lang` per page the placeholder therefore renders
+  a different value than before; single-language sites are unaffected.
 - The light/dark image switch now sets `display` on `.img-light` as well, so the plugin fully owns
   the visibility of both variants. A site no longer needs its own rule — and must not add one, since
   site CSS is unlayered and would override the plugin's layered rules.

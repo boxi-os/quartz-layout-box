@@ -7,14 +7,16 @@ const FRONTMATTER_PREFIX = "frontmatter.";
 export type PlaceholderContext = Pick<QuartzComponentProps, "fileData" | "cfg">;
 
 /**
- * Replaces `{{name}}` tokens with page/site values. Values are HTML-escaped.
+ * Replaces `{{name}}` tokens with page/site values. Values are HTML-escaped unless `escape` is
+ * false — pass false where the caller inserts the result as a JSX text node, which escapes already.
  * Unknown placeholders are left untouched.
  */
-export function applyPlaceholders(html: string, ctx: PlaceholderContext): string {
+export function applyPlaceholders(html: string, ctx: PlaceholderContext, escape = true): string {
   if (!html.includes("{{")) return html;
   return html.replace(PLACEHOLDER, (match, name: string) => {
     const value = resolvePlaceholder(name, ctx);
-    return value === undefined ? match : escapeHTML(value);
+    if (value === undefined) return match;
+    return escape ? escapeHTML(value) : value;
   });
 }
 
@@ -37,7 +39,11 @@ function resolvePlaceholder(
     case "baseUrl":
       return cfg?.baseUrl ?? "";
     case "locale":
-      return cfg?.locale;
+      // The page's own language when it has one, so a bilingual site labels each page correctly.
+      return stringify(frontmatter.lang) ?? cfg?.locale;
+    case "lang":
+      // Just the primary subtag: "en" rather than "en-US", for a flag or a short label.
+      return (stringify(frontmatter.lang) ?? cfg?.locale)?.split(/[-_]/)[0];
   }
 
   if (name.startsWith(FRONTMATTER_PREFIX)) {

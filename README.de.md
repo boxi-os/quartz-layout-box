@@ -9,13 +9,14 @@ Deutsche Dokumentation · Version 0.2.0 · Quartz 5 Community-Plugin
 - [4. Optionen](#4-optionen)
 - [5. Platzhalter](#5-platzhalter)
 - [6. Steuerung per Frontmatter](#6-steuerung-per-frontmatter)
-- [7. Markdown-Snippets](#7-markdown-snippets)
-- [8. Titel und aufklappbare Box](#8-titel-und-aufklappbare-box)
-- [9. Markup und Styling](#9-markup-und-styling)
-- [10. Verhalten bei Fehlern](#10-verhalten-bei-fehlern)
-- [11. Mehrere Instanzen](#11-mehrere-instanzen)
-- [12. Umstieg von Version 0.1](#12-umstieg-von-version-01)
-- [13. Entwicklung](#13-entwicklung)
+- [7. Mehrere Sprachen](#7-mehrere-sprachen)
+- [8. Markdown-Snippets](#8-markdown-snippets)
+- [9. Titel und aufklappbare Box](#9-titel-und-aufklappbare-box)
+- [10. Markup und Styling](#10-markup-und-styling)
+- [11. Verhalten bei Fehlern](#11-verhalten-bei-fehlern)
+- [12. Mehrere Instanzen](#12-mehrere-instanzen)
+- [13. Umstieg von Version 0.1](#13-umstieg-von-version-01)
+- [14. Entwicklung](#14-entwicklung)
 
 ## 1. Was das Plugin macht
 
@@ -36,7 +37,7 @@ Quartz lädt das Plugin als reine Komponente. Für jeden Eintrag in der `quartz.
 jeder Seite läuft dann folgender Ablauf:
 
 1. **Frontmatter prüfen** — Ist die Box für diese Seite ausgeblendet oder wurde ein anderes Snippet
-   gewählt?
+   gewählt? Hat die Seite eine Sprache, für die `byLang` eigene Optionen kennt?
 2. **Quelle bestimmen** — Inline-HTML aus der Konfiguration hat Vorrang, sonst die Datei
    `dir`/`file`.
 3. **Datei lesen** — Der Pfad muss innerhalb von `dir` liegen. Gelesen wird mit Cache: nur wenn sich
@@ -83,11 +84,12 @@ Ohne `options` gelten die Standardwerte: Datei `snippet.html` im Ordner `quartz/
 | `dir`            | string  | `quartz/static/snippets` | Ordner für Snippet-Dateien, relativ zur Wurzel der Quartz-Site. Pfade, die aus diesem Ordner hinausführen, werden abgelehnt.                           |
 | `html`           | string  | –                        | HTML direkt in der Konfiguration. Hat Vorrang vor `file`. Praktisch für Einzeiler.                                                                     |
 | `className`      | string  | –                        | Zusätzliche CSS-Klasse(n) neben der festen Klasse `layout-box`. Damit lassen sich mehrere Instanzen getrennt stylen.                                   |
-| `title`          | string  | –                        | Überschrift über dem Inhalt, gerendert als `h3` wie bei anderen Sidebar-Komponenten.                                                                   |
+| `title`          | string  | –                        | Überschrift über dem Inhalt, gerendert als `h3` wie bei anderen Sidebar-Komponenten. Darf Platzhalter enthalten.                                       |
 | `collapsible`    | boolean | `false`                  | Box als aufklappbares `details`-Element rendern. `title` wird zur Zeile, auf die man klickt. Ohne `title` wird die Option mit einer Warnung ignoriert. |
 | `collapsed`      | boolean | `false`                  | Box beim Laden zugeklappt anzeigen. Nur zusammen mit `collapsible`.                                                                                    |
 | `placeholders`   | boolean | `true`                   | Platzhalter der Form `{{name}}` im Snippet ersetzen. Mit `false` bleibt der Text unverändert.                                                          |
 | `frontmatterKey` | string  | `layoutBox`              | Name des Frontmatter-Feldes, über das eine einzelne Seite die Box steuern kann (siehe Abschnitt 6).                                                    |
+| `byLang`         | object  | –                        | Abweichende Optionen je Sprache, Schlüssel ist der Sprachcode oder die Locale der Seite (siehe Abschnitt 7).                                           |
 
 Beispiel mit Inline-HTML, Titel und Aufklappen:
 
@@ -112,7 +114,8 @@ Platzhalter bleiben unverändert stehen. Leerzeichen innerhalb der Klammern sind
 | `{{root}}`               | Relativer Pfad zur Wurzel der Site (`.` auf der Startseite, `../..` zwei Ebenen tiefer). Funktioniert auch unter einem Unterpfad. |
 | `{{siteTitle}}`          | `configuration.pageTitle` aus der Quartz-Konfiguration                                                                            |
 | `{{baseUrl}}`            | `configuration.baseUrl`, kann leer sein                                                                                           |
-| `{{locale}}`             | `configuration.locale`, zum Beispiel `de-DE`                                                                                      |
+| `{{locale}}`             | Sprache der Seite aus dem Frontmatter-Feld `lang`, sonst `configuration.locale`, zum Beispiel `de-DE`                             |
+| `{{lang}}`               | Nur der Hauptteil von `{{locale}}`: `en` bei `en-US`                                                                              |
 | `{{frontmatter.<feld>}}` | Beliebiges Frontmatter-Feld der Seite. Listen werden mit Komma verbunden, Objekte werden nicht ersetzt.                           |
 
 Empfehlung: Links und Bildpfade im Snippet mit `{{root}}` statt mit absolutem `/` schreiben.
@@ -134,18 +137,51 @@ Einzelne Seiten können die Box über ein Frontmatter-Feld beeinflussen. Der Fel
 | `layoutBox: false`                  | Box auf dieser Seite ausblenden.                                                                              |
 | `layoutBox: impressum.html`         | Anderes Snippet verwenden, relativ zu `dir`.                                                                  |
 | `layoutBox:` mit `html: "<p>…</p>"` | Inline-HTML nur für diese Seite. Alternativ `file:` für eine andere Datei oder `hidden: true` zum Ausblenden. |
+| `layoutBox:` mit `title: …`         | Andere Überschrift nur für diese Seite. Ebenso `collapsible:` und `collapsed:`.                               |
 
 ```yaml
 ---
 layoutBox:
   html: "<p>Nur hier</p>"
+  title: Nur hier so überschrieben
 ---
 ```
 
 Bei mehreren Instanzen bekommt jede ihren eigenen `frontmatterKey`, zum Beispiel `layoutBox` und
 `layoutBoxMobile`, damit sie unabhängig voneinander gesteuert werden können.
 
-## 7. Markdown-Snippets
+## 7. Mehrere Sprachen
+
+Veröffentlicht eine Site mehrere Sprachen aus einem Vault, kann jede Sprache mit `byLang` ihr
+eigenes Snippet und ihre eigene Überschrift bekommen, ohne dass die Seiten selbst etwas dafür tun
+müssen:
+
+```yaml
+options:
+  file: sidebar-note.md
+  title: Über dieses Handbuch
+  collapsible: true
+  byLang:
+    en:
+      file: sidebar-note.en.md
+      title: About this handbook
+```
+
+Gelesen wird das Frontmatter-Feld `lang` der Seite — das Feld, aus dem Quartz selbst
+`<html lang>` erzeugt. Das Plugin braucht dafür kein weiteres Plugin; das Feld kann von einem
+Mehrsprachen-Plugin oder von Hand geschrieben sein. Der passende `byLang`-Eintrag wird über die
+Grundoptionen gelegt. Schlüssel werden ohne Rücksicht auf Groß-/Kleinschreibung verglichen, erst
+exakt (`en-US`), dann über den Hauptteil (`en`). Seiten ohne `lang` verwenden
+`configuration.locale`; findet sich für eine Sprache kein Eintrag, gelten die Grundoptionen ohne
+Warnung. `dir` und `frontmatterKey` lassen sich nicht je Sprache ändern.
+
+Die Optionen gelten von stark nach schwach:
+
+1. Frontmatter der Seite (`layoutBox: { title: … }`)
+2. `byLang[<Sprache der Seite>]`
+3. Grundoptionen
+
+## 8. Markdown-Snippets
 
 Endet `file` auf `.md`, wird die Datei beim Build mit Standard-Markdown gerendert (GitHub Flavored
 Markdown, eingebettetes HTML erlaubt). Platzhalter funktionieren auch hier.
@@ -163,14 +199,14 @@ Markdown-Snippets laufen nicht durch die Quartz-Inhaltspipeline. Wikilinks in do
 Klammern, Callouts und andere Obsidian-Syntax werden dort nicht aufgelöst. Normale Markdown-Links
 funktionieren.
 
-## 8. Titel und aufklappbare Box
+## 9. Titel und aufklappbare Box
 
 Mit `title` erhält die Box eine Überschrift. Mit `collapsible: true` wird sie zu einem aufklappbaren
 Element, bei dem der Titel als Klickzeile dient. `collapsed: true` startet zugeklappt. Das
 funktioniert ohne JavaScript über das HTML-Element `details`; der Browser merkt sich den Zustand
 nicht über Seitenwechsel hinweg.
 
-## 9. Markup und Styling
+## 10. Markup und Styling
 
 Das Plugin bringt nur minimale, farblose Regeln mit. Das erzeugte Markup:
 
@@ -211,7 +247,7 @@ diese Bilder setzen: Site-CSS ist ungelayert und schlägt die gelayerten Plugin-
 Bilder gleichzeitig sichtbar würden. Eine fehlende Snippet-Datei
 wird im Serve-Modus als gestrichelter Kasten dargestellt (Klasse `layout-box-missing`).
 
-## 10. Verhalten bei Fehlern
+## 11. Verhalten bei Fehlern
 
 | Situation                                            | Verhalten                                                                                                                                                                                 |
 | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -222,7 +258,7 @@ wird im Serve-Modus als gestrichelter Kasten dargestellt (Klasse `layout-box-mis
 
 Snippets werden ungefiltert als HTML eingefügt. Nur Dateien verwenden, die man selbst kontrolliert.
 
-## 11. Mehrere Instanzen
+## 12. Mehrere Instanzen
 
 Das Plugin kann mehrfach eingebunden werden, etwa mit unterschiedlichen Snippets für Desktop und
 Mobil. Jede Instanz bekommt eigene Optionen und einen eigenen `layout`-Block:
@@ -249,7 +285,7 @@ plugins:
       display: mobile-only
 ```
 
-## 12. Umstieg von Version 0.1
+## 13. Umstieg von Version 0.1
 
 - Die Option `datei` heißt jetzt `file`. Bestehende `quartz.config.yaml`-Einträge entsprechend
   anpassen.
@@ -260,7 +296,7 @@ plugins:
 - Nach dem Aktualisieren des Plugins in der Site neu installieren, damit Quartz das geänderte
   Manifest liest.
 
-## 13. Entwicklung
+## 14. Entwicklung
 
 ```bash
 npm install

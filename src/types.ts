@@ -30,4 +30,16 @@ export interface LayoutBoxOptions {
   placeholders?: boolean;
   /** Frontmatter key used for per-page control. Defaults to `layoutBox`. */
   frontmatterKey?: string;
+  /**
+   * Per-language overrides, keyed by language code or locale (`en`, `en-US`; case-insensitive).
+   * The entry matching the page's `frontmatter.lang` is merged over the base options.
+   */
+  byLang?: Record<string, LayoutBoxLangOptions>;
 }
+
+/**
+ * Options that may be overridden per language. `dir` and `frontmatterKey` are excluded on purpose:
+ * one is an installation path, the other the name a page uses to control the box — neither is a
+ * question of language.
+ */
+export type LayoutBoxLangOptions = Omit<LayoutBoxOptions, "byLang" | "dir" | "frontmatterKey">;
