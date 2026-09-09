@@ -212,6 +212,14 @@ npm run build   # writes dist/ (committed, Quartz installs from it)
 `dist/` is committed on purpose. After changing anything under `src/`, run `npm run build` and
 commit the updated `dist/`.
 
+## How this was built
+
+A hobby project, written mostly with [Claude Code](https://claude.com/claude-code); the commits say
+so with a `Co-Authored-By` line. What that leaves open is the question worth asking — has anyone
+checked it? `npm run check` runs the typecheck, the linter, the formatter, 28 tests and the build,
+and CI runs the same on every push. That is not a guarantee, but it is something you can run
+yourself before you trust it.
+
 ## License
 
 MIT

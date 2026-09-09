@@ -312,6 +312,14 @@ Die wichtigsten Dateien: `src/components/LayoutBox.tsx` (Komponente), `src/place
 (Platzhalter), `src/markdown.ts` (Markdown-Rendering), `src/types.ts` (Optionen), `package.json`
 (Quartz-Manifest im Feld `quartz`).
 
+## 15. Wie das hier entstanden ist
+
+Ein Hobbyprojekt, größtenteils mit [Claude Code](https://claude.com/claude-code) geschrieben; die
+Commits sagen das mit einer `Co-Authored-By`-Zeile. Offen bleibt dabei die Frage, die sich lohnt:
+Hat das jemand geprüft? `npm run check` fährt Typcheck, Linter, Formatprüfung, 28 Tests und den
+Bau, und die CI tut bei jedem Push dasselbe. Das ist keine Garantie, aber es ist etwas, das du
+selbst laufen lassen kannst, bevor du dem Plugin vertraust.
+
 ---
 
 quartz-layout-box · <https://github.com/boxi-os/quartz-layout-box> · Lizenz MIT
