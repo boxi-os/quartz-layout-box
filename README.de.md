@@ -314,11 +314,20 @@ Die wichtigsten Dateien: `src/components/LayoutBox.tsx` (Komponente), `src/place
 
 ## 15. Wie das hier entstanden ist
 
-Ein Hobbyprojekt, größtenteils mit [Claude Code](https://claude.com/claude-code) geschrieben; die
-Commits sagen das mit einer `Co-Authored-By`-Zeile. Offen bleibt dabei die Frage, die sich lohnt:
-Hat das jemand geprüft? `npm run check` fährt Typcheck, Linter, Formatprüfung, 28 Tests und den
-Bau, und die CI tut bei jedem Push dasselbe. Das ist keine Garantie, aber es ist etwas, das du
-selbst laufen lassen kannst, bevor du dem Plugin vertraust.
+Ein Hobbyprojekt. Das Plugin ist im Zuge von
+[QuartzControl](https://github.com/boxi-os/QuartzControl) entstanden, funktioniert aber in jedem
+Quartz-5-Projekt für sich.
+
+Folgendes möchte ich an dieser Stelle transparent machen: Der Code ist zum größten Teil mit
+[Claude Code](https://claude.com/claude-code) entstanden; die Commits sagen das mit einem
+`Co-Authored-By`-Eintrag. Mir ist bewusst, dass Vibe-coding teilweise kontrovers diskutiert wird,
+und ich möchte hier nichts verbergen.
+
+## 16. Wie gut ist der Code geprüft?
+
+`npm run check` fährt Typcheck, Linter, Formatprüfung, 28 Tests und den Bau; die CI tut bei
+jedem Push dasselbe. Das ist keine Garantie, aber es ist etwas, das ihr selbst laufen lassen könnt,
+bevor ihr dem Plugin vertraut.
 
 ---
 

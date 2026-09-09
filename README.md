@@ -214,11 +214,19 @@ commit the updated `dist/`.
 
 ## How this was built
 
-A hobby project, written mostly with [Claude Code](https://claude.com/claude-code); the commits say
-so with a `Co-Authored-By` line. What that leaves open is the question worth asking — has anyone
-checked it? `npm run check` runs the typecheck, the linter, the formatter, 28 tests and the build,
-and CI runs the same on every push. That is not a guarantee, but it is something you can run
-yourself before you trust it.
+A hobby project. The plugin came out of work on
+[QuartzControl](https://github.com/boxi-os/QuartzControl), but it stands on its own in any Quartz 5
+project.
+
+One thing I want to be open about: the code was written mostly with
+[Claude Code](https://claude.com/claude-code); the commits say so with a `Co-Authored-By` line. I
+am aware that vibe coding is a contested subject, and I do not want to hide anything here.
+
+## How well is the code checked?
+
+`npm run check` runs the typecheck, the linter, the formatter, 28 tests and the build; CI does
+the same on every push. That is not a guarantee, but it is something you can run yourself before you
+trust the plugin.
 
 ## License
 
