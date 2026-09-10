@@ -51,8 +51,16 @@ describe("applyPlaceholders", () => {
 
   it("leaves encoded text alone when it is not a placeholder", () => {
     expect(applyPlaceholders("%7B%7Bnot a name%7D%7D", ctx)).toBe("%7B%7Bnot a name%7D%7D");
-    expect(applyPlaceholders("%7B%7Bunknown%7D%7D", ctx)).toBe("{{unknown}}");
     expect(applyPlaceholders("nothing to do here", ctx)).toBe("nothing to do here");
+  });
+
+  // An encoded token that resolves to nothing is a valid URL; decoding it would put raw braces in
+  // an href where a working address stood. The plain spelling is left alone too.
+  it("leaves an encoded name that resolves to nothing encoded", () => {
+    expect(applyPlaceholders("%7B%7Bunknown%7D%7D", ctx)).toBe("%7B%7Bunknown%7D%7D");
+    expect(applyPlaceholders("%7B%7B%7D%7D", ctx)).toBe("%7B%7B%7D%7D");
+    expect(applyPlaceholders("{{unknown}}", ctx)).toBe("{{unknown}}");
+    expect(applyPlaceholders("{{}}", ctx)).toBe("{{}}");
   });
 
   it("returns root as '.' for top-level pages", () => {

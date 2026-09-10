@@ -22,11 +22,15 @@ export function applyPlaceholders(html: string, ctx: PlaceholderContext, escape 
   // Turn the encoded form back into the plain one first, so both take the same path below and a
   // value only ever has to be escaped once. `%20` inside stands for the space a writer may have
   // left in `{{ root }}`.
-  const plain = html.replace(ENCODED_PLACEHOLDER, (match, inner: string) =>
-    /^[\w.-]*$/.test(inner.replace(/%20/gi, "").trim())
-      ? `{{${inner.replace(/%20/gi, " ")}}}`
-      : match,
-  );
+  const plain = html.replace(ENCODED_PLACEHOLDER, (match, inner: string) => {
+    const name = inner.replace(/%20/gi, " ").trim();
+    // As conservative as the plain spelling. Turning the token back is a change to the document -
+    // `%7B%7B…%7D%7D` is a valid URL, `{{…}}` is raw braces in an href - so it only happens for a
+    // name that is actually going to be replaced below. An empty or unknown name stays as it is,
+    // which is what the plain spelling does too.
+    if (!/^[\w.-]+$/.test(name) || resolvePlaceholder(name, ctx) === undefined) return match;
+    return `{{${inner.replace(/%20/gi, " ")}}}`;
+  });
   return plain.replace(PLACEHOLDER, (match, name: string) => {
     const value = resolvePlaceholder(name, ctx);
     if (value === undefined) return match;

@@ -141,10 +141,11 @@ var ENCODED_PLACEHOLDER = /%7B%7B([\w.\-%20]*?)%7D%7D/gi;
 var FRONTMATTER_PREFIX = "frontmatter.";
 function applyPlaceholders(html7, ctx, escape = true) {
   if (!html7.includes("{{") && !/%7B%7B/i.test(html7)) return html7;
-  const plain = html7.replace(
-    ENCODED_PLACEHOLDER,
-    (match, inner) => /^[\w.-]*$/.test(inner.replace(/%20/gi, "").trim()) ? `{{${inner.replace(/%20/gi, " ")}}}` : match
-  );
+  const plain = html7.replace(ENCODED_PLACEHOLDER, (match, inner) => {
+    const name = inner.replace(/%20/gi, " ").trim();
+    if (!/^[\w.-]+$/.test(name) || resolvePlaceholder(name, ctx) === void 0) return match;
+    return `{{${inner.replace(/%20/gi, " ")}}}`;
+  });
   return plain.replace(PLACEHOLDER, (match, name) => {
     const value = resolvePlaceholder(name, ctx);
     if (value === void 0) return match;

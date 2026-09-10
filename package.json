@@ -1,6 +1,6 @@
 {
   "name": "quartz-layout-box",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Quartz v5 layout component that renders an HTML or Markdown snippet (file or inline) anywhere in the page layout.",
   "type": "module",
   "license": "MIT",
@@ -87,7 +87,7 @@
     "category": [
       "component"
     ],
-    "version": "0.3.0",
+    "version": "0.3.1",
     "quartzVersion": ">=5.0.0",
     "dependencies": [],
     "defaultEnabled": true,
