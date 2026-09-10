@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="de-DE" dir="ltr"><head><title>8.2 – Die unsichtbare Box · quartz-layout-box</title><meta charset="utf-8"/><link rel="preload" href="../index-03307897.css" as="style"/><link rel="preload" href="../prescript-2bfc6315.js" as="script"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="Layout Box"/><meta property="og:title" content="8.2 – Die unsichtbare Box · quartz-layout-box"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="8.2 – Die unsichtbare Box · quartz-layout-box"/><meta name="twitter:description" content="Eine Layout-Box, die nichts ausgibt als ein `&lt;style>` — wozu das gut ist und wann es der falsche Weg wäre."/><meta property="og:description" content="Eine Layout-Box, die nichts ausgibt als ein `&lt;style>` — wozu das gut ist und wann es der falsche Weg wäre."/><meta property="og:image:alt" content="Eine Layout-Box, die nichts ausgibt als ein `&lt;style>` — wozu das gut ist und wann es der falsche Weg wäre."/><meta property="twitter:domain" content="boxi-os.github.io/quartz-layout-box"/><meta property="og:url" content="https://boxi-os.github.io/quartz-layout-box/8-rezepte/02-die-unsichtbare-box"/><meta property="twitter:url" content="https://boxi-os.github.io/quartz-layout-box/8-rezepte/02-die-unsichtbare-box"/><link rel="icon" href="../static/icon.png"/><meta name="description" content="Eine Layout-Box, die nichts ausgibt als ein `&lt;style>` — wozu das gut ist und wann es der falsche Weg wäre."/><meta name="generator" content="Quartz"/><link href="../index-03307897.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-4336d31c.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-53b25b2b.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-8a06014f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-77d6a441.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-6ee21cee.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-8f021790.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-735924e0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-589c1cea.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-2911f5d1.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-e427079e.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-bbc3f7c0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-642859cd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-4abc06bd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-1ea6ad18.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-788c9ca3.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-274a3dfe.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-94cb6c84.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../component-58d5ff56.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../static/resource-style-a5c806d2.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../static/resource-style-6bd36952.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../static/resource-style-5b7c89a8.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../prescript-2bfc6315.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../static/contentIndex.json").then(data => data.json())</script><meta property="og:locale" content="de_DE"/><meta property="og:locale:alternate" content="en_US"/><link rel="alternate" hreflang="de-DE" href="https://boxi-os.github.io/quartz-layout-box/8-rezepte/02-die-unsichtbare-box"/><link rel="alternate" hreflang="en-US" href="https://boxi-os.github.io/quartz-layout-box/en/8-recipes/02-the-invisible-box"/><link rel="alternate" hreflang="x-default" href="https://boxi-os.github.io/quartz-layout-box/8-rezepte/02-die-unsichtbare-box"/><meta property="og:image:width" content="1200"/><meta property="og:image:height" content="630"/><meta property="og:image" content="https://boxi-os.github.io/quartz-layout-box/8-rezepte/02-die-unsichtbare-box-og-image.webp"/><meta property="og:image:url" content="https://boxi-os.github.io/quartz-layout-box/8-rezepte/02-die-unsichtbare-box-og-image.webp"/><meta name="twitter:image" content="https://boxi-os.github.io/quartz-layout-box/8-rezepte/02-die-unsichtbare-box-og-image.webp"/><meta property="og:image:type" content="image/webp"/></head><body data-slug="8-rezepte/02-die-unsichtbare-box" data-basepath="/quartz-layout-box"><style>.page[data-frame="editorial"] {
+  max-width: none;
+}
+.page[data-frame="editorial"] > #quartz-body {
+  grid-template-columns: auto;
+  grid-template-rows: auto;
+  grid-template-areas: "qgframe-root";
+}
+.page[data-frame="editorial"] > #quartz-body > .qgframe-grid {
+  grid-area: qgframe-root;
+}
+.page[data-frame="editorial"] > #quartz-body .qgframe-area {
+  min-width: 0;
+  min-height: 0;
+}
+.page[data-frame="editorial"] > #quartz-body .qgframe-area.center {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+
+@layer quartz-base {
+.page[data-frame="editorial"] > #quartz-body {
+  padding: 0;
+}
+@media (max-width: 1200px) {
+.page[data-frame="editorial"] > #quartz-body {
+  padding: 0 1rem;
+}
+}
+.page[data-frame="editorial"] .desktop-only {
+  display: contents;
+}
+.page[data-frame="editorial"] .desktop-only.flex-component {
+  display: flex;
+}
+.page[data-frame="editorial"] .mobile-only, .page[data-frame="editorial"] .mobile-only.flex-component {
+  display: none;
+}
+@media (max-width: 900px) {
+.page[data-frame="editorial"] .desktop-only, .page[data-frame="editorial"] .desktop-only.flex-component {
+  display: none;
+}
+.page[data-frame="editorial"] .mobile-only {
+  display: contents;
+}
+.page[data-frame="editorial"] .mobile-only.flex-component {
+  display: flex;
+}
+}
+}
+
+@layer quartz-base {
+.page[data-frame="editorial"] .explorer {
+  order: 0;
+  height: auto;
+  overflow-x: visible;
+  overflow-y: hidden;
+  flex: 0 1 auto;
+  align-self: auto;
+  margin-block: 0;
+}
+.page[data-frame="editorial"] .explorer.collapsed {
+  flex: 0 1 1.2rem;
+}
+.page[data-frame="editorial"] .explorer .explorer-content {
+  box-sizing: content-box;
+  position: static;
+  z-index: auto;
+  width: auto;
+  max-width: none;
+  height: auto;
+  max-height: none;
+  padding: 0;
+  margin-block-start: 0.5rem;
+  background-color: transparent;
+  transform: none;
+  visibility: visible;
+  overflow: hidden;
+  overflow-y: auto;
+}
+.page[data-frame="editorial"] > #quartz-body .hide-until-loaded ~ .explorer-content {
+  display: block;
+}
+.page[data-frame="editorial"] .explorer button.mobile-explorer {
+  display: none;
+}
+.page[data-frame="editorial"] .explorer button.desktop-explorer {
+  display: flex;
+}
+.page[data-frame="editorial"] .search {
+  flex-grow: 0;
+}
+.page[data-frame="editorial"] .search > .search-container > .search-space {
+  width: 65%;
+}
+.page[data-frame="editorial"] .search > .search-container > .search-space > .search-layout {
+  flex-direction: row;
+}
+.page[data-frame="editorial"] .search > .search-container > .search-space > .search-layout > .preview-container {
+  display: block;
+}
+.page[data-frame="editorial"] .search > .search-container > .search-space > .search-layout[data-preview] > .results-container {
+  width: auto;
+  height: 63vh;
+  max-height: none;
+  flex: 0 0 min(30%, 450px);
+}
+.page[data-frame="editorial"] .search > .search-container > .search-space > .search-layout[data-preview] .result-card > p.card-description {
+  display: none;
+}
+.page[data-frame="editorial"] .graph > .global-graph-outer > .global-graph-container {
+  width: 80vw;
+}
+@media (max-width: 1200px) {
+.page[data-frame="editorial"] .search > .search-container > .search-space {
+  width: 90%;
+}
+}
+@media (max-width: 900px) {
+.page[data-frame="editorial"] .explorer {
+  order: -1;
+  height: initial;
+  overflow: hidden;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-block: auto;
+}
+.page[data-frame="editorial"] .explorer.collapsed, .page[data-frame="editorial"] .explorer:not(.collapsed) {
+  flex: 0 0 34px;
+}
+.page[data-frame="editorial"] .explorer.collapsed > .explorer-content {
+  transform: translateX(-100vw);
+  visibility: hidden;
+}
+.page[data-frame="editorial"] .explorer:not(.collapsed) > .explorer-content {
+  transform: translateX(0);
+  visibility: visible;
+}
+.page[data-frame="editorial"] .explorer .explorer-content {
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  padding: 4rem 0 2rem 0;
+  margin-block-start: 0;
+  background-color: var(--light);
+  overflow: hidden;
+}
+.page[data-frame="editorial"] > #quartz-body .hide-until-loaded ~ .explorer-content {
+  display: none;
+}
+.page[data-frame="editorial"] .explorer button.mobile-explorer {
+  display: flex;
+  margin: 0;
+  padding: 5px;
+  z-index: 101;
+}
+.page[data-frame="editorial"] .explorer button.mobile-explorer .lucide-menu {
+  stroke: var(--darkgray);
+}
+.page[data-frame="editorial"] .explorer button.mobile-explorer.hide-until-loaded {
+  display: none;
+}
+.page[data-frame="editorial"] .explorer button.desktop-explorer {
+  display: none;
+}
+.page[data-frame="editorial"] .search {
+  flex-grow: 0.3;
+}
+.page[data-frame="editorial"] .search > .search-container > .search-space > .search-layout {
+  flex-direction: column;
+}
+.page[data-frame="editorial"] .search > .search-container > .search-space > .search-layout > .preview-container {
+  display: none;
+}
+.page[data-frame="editorial"] .search > .search-container > .search-space > .search-layout[data-preview] > .results-container {
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+  flex: 0 0 100%;
+}
+.page[data-frame="editorial"] .search > .search-container > .search-space > .search-layout[data-preview] .result-card > p.card-description {
+  display: block;
+}
+.page[data-frame="editorial"] .graph > .global-graph-outer > .global-graph-container {
+  width: 90%;
+}
+}
+}
+
+.qgframe-grid {
+  display: grid;
+  grid-template-columns: calc((300px - 8rem) / 3) calc((300px - 8rem) / 3) calc((300px - 8rem) / 3) 1fr 1fr 1fr 1fr 1fr 1fr calc((300px - 8rem) / 3) calc((300px - 8rem) / 3) calc((300px - 8rem) / 3);
+  grid-template-rows: auto auto 1fr auto auto auto;
+  row-gap: 2rem;
+  column-gap: 4rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-block: 20px;
+  padding-inline: 20px;
+  grid-template-areas:
+      "header header header header header header header header header header header header"
+      "left left left before-body before-body before-body before-body before-body before-body right right right"
+      "left left left page-body page-body page-body page-body page-body page-body right right right"
+      "left left left custom-8 custom-8 custom-8 custom-8 custom-8 custom-8 right right right"
+      "left left left after-body after-body after-body after-body after-body after-body right right right"
+      "footer footer footer footer footer footer footer footer footer footer footer footer";
+}
+.qgframe-area-header { grid-area: header; }
+.qgframe-area-left { grid-area: left; }
+.qgframe-area-right { grid-area: right; }
+.qgframe-area-before-body { grid-area: before-body; }
+.qgframe-area-page-body { grid-area: page-body; }
+.qgframe-area-after-body { grid-area: after-body; }
+.qgframe-area-footer { grid-area: footer; }
+.qgframe-area-custom-8 { grid-area: custom-8; }
+
+@media (max-width: 1200px) {
+.qgframe-grid {
+  display: grid;
+  grid-template-columns: calc((300px - 6rem) / 3) calc((300px - 6rem) / 3) calc((300px - 6rem) / 3) 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto auto 1fr auto auto auto auto;
+  row-gap: 2rem;
+  column-gap: 3rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+  padding-block: 20px;
+  padding-inline: 20px;
+  grid-template-areas:
+      "header header header header header header header header header header header header"
+      "left left left before-body before-body before-body before-body before-body before-body before-body before-body before-body"
+      "left left left page-body page-body page-body page-body page-body page-body page-body page-body page-body"
+      "left left left custom-8 custom-8 custom-8 custom-8 custom-8 custom-8 custom-8 custom-8 custom-8"
+      "left left left right right right right right right right right right"
+      "left left left after-body after-body after-body after-body after-body after-body after-body after-body after-body"
+      "footer footer footer footer footer footer footer footer footer footer footer footer";
+}
+.qgframe-area-header { grid-area: header; }
+.qgframe-area-left { grid-area: left; }
+.qgframe-area-right { grid-area: right; }
+.qgframe-area-before-body { grid-area: before-body; }
+.qgframe-area-page-body { grid-area: page-body; }
+.qgframe-area-after-body { grid-area: after-body; }
+.qgframe-area-footer { grid-area: footer; }
+.qgframe-area-custom-8 { grid-area: custom-8; }
+}
+
+@media (max-width: 900px) {
+.qgframe-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: auto 0 auto auto 1fr auto auto auto;
+  row-gap: 2rem;
+  column-gap: 1rem;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+  padding-block: 20px;
+  padding-inline: 20px;
+  grid-template-areas:
+      "header header header header header header header header header header header header"
+      "left left left left left left left left left left left left"
+      "before-body before-body before-body before-body before-body before-body before-body before-body before-body before-body before-body before-body"
+      "right right right right right right right right right right right right"
+      "page-body page-body page-body page-body page-body page-body page-body page-body page-body page-body page-body page-body"
+      "custom-8 custom-8 custom-8 custom-8 custom-8 custom-8 custom-8 custom-8 custom-8 custom-8 custom-8 custom-8"
+      "after-body after-body after-body after-body after-body after-body after-body after-body after-body after-body after-body after-body"
+      "footer footer footer footer footer footer footer footer footer footer footer footer";
+}
+.qgframe-area-header { grid-area: header; }
+.qgframe-area-left { grid-area: left; }
+.qgframe-area-right { grid-area: right; }
+.qgframe-area-before-body { grid-area: before-body; }
+.qgframe-area-page-body { grid-area: page-body; }
+.qgframe-area-after-body { grid-area: after-body; }
+.qgframe-area-footer { grid-area: footer; }
+.qgframe-area-custom-8 { grid-area: custom-8; }
+}</style><div id="quartz-root" class="page" data-frame="editorial"><div id="quartz-body"><div class="qgframe-grid"><div class="qgframe-area qgframe-area-header"><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 0.75rem;"><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="layout-box layout-box-mark"><div class="layout-box-content"><a class="site-mark" href="../"><svg class="img-light" role="img" aria-label="" width="26" height="26" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><g transform="matrix(4.291667,0,0,4.291667,135.99405,59.880111)"><path d="M183,37.2L183,170.8C183,186.9 169.9,200 153.8,200L20.2,200C4.1,200 -9,186.9 -9,170.8L-9,37.2C-9,21.1 4.1,8 20.2,8L153.8,8C169.9,8 183,21.1 183,37.2Z" style="fill:url(#qcMarkLight);"/></g><g transform="matrix(3.531863,-1.321928,1.321928,3.531863,36.484281,260.806286)"><g transform="matrix(0.395064,0,0,0.395064,-19.743282,-1.657683)"><path d="M171.1,120.5C169.1,100.3 158.7,81.6 163.6,72.6C169.5,61.9 209.9,46.7 215.5,45.3C231.7,41.5 242,71.7 254.6,83.4C260.1,88.5 302,84.8 304.4,84.2C318.8,80.4 328.1,41.2 344.5,40.4C350.1,40.1 384.7,53.9 387.3,55C409.6,64.7 402.5,71.6 397.2,105.5C395.6,115.9 394.9,117.9 420.6,141.4C439.5,158.5 444.8,148.7 478.4,141.3C479.3,141.1 481.9,140.5 488.4,145.7C495.3,151.2 511.2,190.5 512,193.6C517.2,213.3 480.3,223.4 472.8,236.7C468.4,244.3 472.3,277.9 473.1,283.6C474.9,295 507.3,305.1 514.1,315.7C520.8,326.1 499.7,371.3 496,376.1C485.8,389.2 447.1,369.6 437.7,376.8C432.8,380.6 404.9,408.3 405.1,412.5C406.4,440.2 419.5,452.2 410.2,467.3C405.9,474.2 363.7,489.7 360.5,490.7C342.5,495.9 331,455 317.6,450.3C311.8,448.2 279.5,451 277.5,451.3C256.9,454.5 255.4,486.9 237.4,495.3C234,496.9 232.2,497.7 192.4,481.7C167.1,471.5 176.4,463.2 181.1,431.4C182.4,422.3 184.9,416.9 148.3,387.7C136.7,378.5 104.1,399.8 90.8,392.1C84.3,388.4 68.4,349.5 68,348.3C59.2,325.8 72.8,327 99.4,305.4C106.8,299.3 107.3,298 105.7,266.5C104.4,240.4 95.8,244.4 73.2,228.9C55.5,216.9 59.1,212.6 66.6,192.5C79.7,157.1 82.1,154.5 96.5,156.2C127.8,160 131.1,167.8 146.4,153.4C170.4,130.8 170.8,123.8 171.1,120.5ZM401.6,268.6C398.4,166.7 294.1,129.3 227.1,173C172.2,208.9 162.9,278.3 190.6,324.5C247.6,419.9 395.5,390.4 401.6,268.6Z" style="fill:rgb(235,235,235);"/></g></g><g transform="matrix(0.709114,-0.702696,1.144732,1.155188,-408.945935,351.542948)"><path d="M612,470.5L612,717.5C612,725.5 601.4,732 588.4,732L501.6,732C488.6,732 478,725.5 478,717.5L478,470.5C478,462.5 488.6,456 501.6,456L588.4,456C601.4,456 612,462.5 612,470.5Z" style="fill:rgb(235,235,235);"/></g><defs><linearGradient id="qcMarkLight" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0,192,-192,0,76.43904,7.99904)"><stop offset="0" style="stop-color:rgb(69,91,155);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(221,120,127);stop-opacity:1"/></linearGradient></defs></svg><svg class="img-dark" role="img" aria-label="" width="26" height="26" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><g transform="matrix(4.291667,0,0,4.291667,135.99405,59.880111)"><path d="M183,37.2L183,170.8C183,186.9 169.9,200 153.8,200L20.2,200C4.1,200 -9,186.9 -9,170.8L-9,37.2C-9,21.1 4.1,8 20.2,8L153.8,8C169.9,8 183,21.1 183,37.2Z" style="fill:url(#qcMarkDark);"/></g><g transform="matrix(3.531863,-1.321928,1.321928,3.531863,36.484281,260.806286)"><g transform="matrix(0.395064,0,0,0.395064,-19.743282,-1.657683)"><path d="M171.1,120.5C169.1,100.3 158.7,81.6 163.6,72.6C169.5,61.9 209.9,46.7 215.5,45.3C231.7,41.5 242,71.7 254.6,83.4C260.1,88.5 302,84.8 304.4,84.2C318.8,80.4 328.1,41.2 344.5,40.4C350.1,40.1 384.7,53.9 387.3,55C409.6,64.7 402.5,71.6 397.2,105.5C395.6,115.9 394.9,117.9 420.6,141.4C439.5,158.5 444.8,148.7 478.4,141.3C479.3,141.1 481.9,140.5 488.4,145.7C495.3,151.2 511.2,190.5 512,193.6C517.2,213.3 480.3,223.4 472.8,236.7C468.4,244.3 472.3,277.9 473.1,283.6C474.9,295 507.3,305.1 514.1,315.7C520.8,326.1 499.7,371.3 496,376.1C485.8,389.2 447.1,369.6 437.7,376.8C432.8,380.6 404.9,408.3 405.1,412.5C406.4,440.2 419.5,452.2 410.2,467.3C405.9,474.2 363.7,489.7 360.5,490.7C342.5,495.9 331,455 317.6,450.3C311.8,448.2 279.5,451 277.5,451.3C256.9,454.5 255.4,486.9 237.4,495.3C234,496.9 232.2,497.7 192.4,481.7C167.1,471.5 176.4,463.2 181.1,431.4C182.4,422.3 184.9,416.9 148.3,387.7C136.7,378.5 104.1,399.8 90.8,392.1C84.3,388.4 68.4,349.5 68,348.3C59.2,325.8 72.8,327 99.4,305.4C106.8,299.3 107.3,298 105.7,266.5C104.4,240.4 95.8,244.4 73.2,228.9C55.5,216.9 59.1,212.6 66.6,192.5C79.7,157.1 82.1,154.5 96.5,156.2C127.8,160 131.1,167.8 146.4,153.4C170.4,130.8 170.8,123.8 171.1,120.5ZM401.6,268.6C398.4,166.7 294.1,129.3 227.1,173C172.2,208.9 162.9,278.3 190.6,324.5C247.6,419.9 395.5,390.4 401.6,268.6Z" style="fill:rgb(235,235,235);"/></g></g><g transform="matrix(0.709114,-0.702696,1.144732,1.155188,-408.945935,351.542948)"><path d="M612,470.5L612,717.5C612,725.5 601.4,732 588.4,732L501.6,732C488.6,732 478,725.5 478,717.5L478,470.5C478,462.5 488.6,456 501.6,456L588.4,456C601.4,456 612,462.5 612,470.5Z" style="fill:rgb(235,235,235);"/></g><defs><linearGradient id="qcMarkDark" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0,192,-192,0,76.43904,7.99904)"><stop offset="0" style="stop-color:rgb(59,77,132);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(188,102,108);stop-opacity:1"/></linearGradient></defs></svg><span class="site-mark-text">Layout Box</span></a></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><h2 class="page-title"><a href="..">Layout Box</a></h2></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="layout-box layout-box-page-name"><div class="layout-box-content"><span class="bar-page-name" aria-hidden="true" data-section="8 – Rezepte"></span></div></div></div></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 0.5rem;"><div style="flex-grow: 0; flex-shrink: 0; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button" aria-label="Suche" aria-expanded="false"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>Suche</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="Suche nach etwas..." placeholder="Suche nach etwas..."/><div class="search-layout" data-preview="true" data-field-priority="[&quot;title&quot;,&quot;content&quot;,&quot;tags&quot;]"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode" aria-label="Dunkler Modus"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="Dunkler Modus"><title>Dunkler Modus</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="Heller Modus"><title>Heller Modus</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode" aria-label="Lesemodus"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="Lesemodus"><title>Lesemodus</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><details class="multilanguage-switcher style-dropdown" data-lang="de" data-translations="{&quot;de&quot;:&quot;8-rezepte/02-die-unsichtbare-box&quot;,&quot;en&quot;:&quot;en/8-recipes/02-the-invisible-box&quot;}"><summary aria-label="Sprache" title="Sprache">Deutsch</summary><ul><li><span class="current" aria-current="page" lang="de-DE">Deutsch</span></li><li><a href="../en/8-recipes/02-the-invisible-box" hreflang="en-US" lang="en-US" data-lang="en">English</a></li></ul></details></div></div></div><div class="qgframe-area qgframe-area-left"><div class="explorer nav-files-container" data-behavior="link" data-collapsed="open" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a2, b2) => {\n    if (!a2.isFolder &amp;&amp; !b2.isFolder || a2.isFolder &amp;&amp; b2.isFolder) {\n      return (a2.displayName || \&quot;\&quot;).localeCompare(b2.displayName || \&quot;\&quot;, void 0, {\n        numeric: true,\n        sensitivity: \&quot;base\&quot;\n      });\n    }\n    if (!a2.isFolder &amp;&amp; b2.isFolder) {\n      return 1;\n    }\n    return -1;\n  }&quot;,&quot;filterFn&quot;:&quot;(node) => node.slugSegment !== \&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;(node) => {\n    return node;\n  }&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-25" aria-label="Explorer"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>Explorer</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-25" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#" class="nav-file-title tree-item-self"></a></li></template><template id="template-folder"><li><div class="folder-container nav-folder-title tree-item-self"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon nav-folder-collapse-indicator collapse-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content tree-item-children"></ul></div></li></template></div><div class="desktop-only"><details class="layout-box layout-box-note"><summary class="layout-box-title">Über dieses Handbuch</summary><div class="layout-box-content"><p>Dieses Handbuch gehört zum Quartz-Plugin <strong>quartz-layout-box</strong>. Und es ist mit ihm
+gebaut: Diese Box hier <em>ist</em> eine Layout-Box.</p>
+<ul>
+<li><a href="../1-einstieg/">Einstieg</a> — die erste Box in fünf Minuten</li>
+<li><a href="../3-platzierung/">Platzierung</a> — wo eine Box stehen kann</li>
+<li><a href="../8-rezepte/">Rezepte</a> — fertige Beispiele zum Abschauen</li>
+<li><a href="../9-nachschlagen/">Nachschlagen</a> — alle Optionen auf einer Seite</li>
+</ul>
+<p>Sie kommt aus einer <em>Markdown-Datei</em>, nicht aus der Konfiguration — welcher Weg wann
+der bessere ist, steht in <a href="../2-der-schnipsel/">Der Schnipsel</a>.</p></div></details></div></div><div class="qgframe-area qgframe-area-right"><div class="toc"><button type="button" class="toc-header" aria-controls="toc-18" aria-expanded="true"><h3>Inhaltsverzeichnis</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-0" class="toc-content overflow"><li class="depth-0"><a href="#warum-das-nicht-anders-geht" data-for="warum-das-nicht-anders-geht">Warum das nicht anders geht</a></li><li class="depth-0"><a href="#warum-in-der-fußzeile" data-for="warum-in-der-fußzeile">Warum in der Fußzeile</a></li><li class="depth-0"><a href="#kein-frontmatterkey" data-for="kein-frontmatterkey">Kein frontmatterKey</a></li><li class="overflow-end"></li></ul></div></div><div class="qgframe-area qgframe-area-before-body"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../8-rezepte/">8 – Rezepte</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>8.2 – Die unsichtbare Box</a></div></nav><h1 class="article-title">8.2 – Die unsichtbare Box</h1><p show-comma="true" class="content-meta"><time datetime="2026-09-10T12:43:56.185Z">10. Sept. 2026</time><span>2 Min. Lesezeit</span></p></div><div class="qgframe-area qgframe-area-page-body center"><article class="popover-hint"><div class="markdown-preview-view markdown-rendered"><blockquote class="callout multilanguage-notice" data-callout="info" data-ml-lang="de" data-ml-slug="8-rezepte/02-die-unsichtbare-box" hidden><div class="callout-content"></div></blockquote><p>Die vierte Box dieser Website ist keine Box im üblichen Sinn. Sie steht in der Fußzeile, ist selbst
+nicht zu sehen, und gibt nur dies aus:</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">options</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">  html</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&lt;style>.explorer .folder-container[data-folderpath=&quot;{{slug}}&quot;]{…}&lt;/style></span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">  className</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">layout-box-current-folder</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">layout</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">  position</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">footer</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">  priority</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">20</span></span></code></pre></figure>
+<p>Sie hebt im Explorer den Ordner hervor, in dem die gerade offene Seite liegt.</p>
+<h2 id="warum-das-nicht-anders-geht">Warum das nicht anders geht<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#warum-das-nicht-anders-geht" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Der Explorer schreibt den Pfad jedes Ordners als Attribut ins HTML. Welcher davon der <strong>aktuelle</strong>
+ist, weiß nur die Seite selbst — und das ist genau der Wert, den <code>{{slug}}</code> liefert.</p>
+<p>CSS allein kann das nicht: Ein Stylesheet ist für alle Seiten dasselbe und kennt die aktuelle Seite
+nicht. Ein Skript könnte es, wäre aber JavaScript für eine Hintergrundfarbe.</p>
+<p>Der Platzhalter steht hier <strong>in einem Selektor</strong>, nicht in einem Textknoten. Das ist der
+ungewöhnliche Teil, und er funktioniert, weil die Ersetzung nichts über die Bedeutung ihrer
+Umgebung annimmt.</p>
+<h2 id="warum-in-der-fußzeile">Warum in der Fußzeile<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#warum-in-der-fußzeile" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Weil es gleichgültig ist, wo ein <code>&lt;style></code> steht — und die Fußzeile die Stelle ist, an der eine
+unsichtbare Box niemandem im Weg ist. In einer Seitenspalte hinterließe sie im ungünstigen Fall
+einen Abstand.</p>
+<blockquote class="callout warning" data-callout="warning">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Wann das der falsche Weg wäre </p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>Für Gestaltung, die auf <strong>allen</strong> Seiten gleich ist, gehört CSS in <code>custom.scss</code>. Der Umweg über
+eine Box lohnt nur, wenn ein Wert der aktuellen Seite in die Regel muss. Wer anfängt, ganze
+Stylesheets so auszuliefern, hat sein CSS in die Konfiguration verlegt — schlecht zu lesen,
+schlecht zu ändern, und auf jeder Seite neu im HTML.</p>
+</div>
+</blockquote>
+<h2 id="kein-frontmatterkey">Kein <code>frontmatterKey</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#kein-frontmatterkey" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>Sie hat keinen, und das mit Absicht: Es gibt keinen Fall, in dem eine einzelne Seite die
+Ordner-Hervorhebung abschalten wollte. Ein Schlüssel, den niemand braucht, ist nur eine weitere
+Zeile, die jemand später verstehen muss.</p></div></article></div><div class="qgframe-area qgframe-area-after-body"></div><div class="qgframe-area qgframe-area-footer"><footer class><p>Erstellt mit <a href="https://quartz.jzhao.xyz/">Quartz v5.0.0</a> © 2026</p><ul><li><a href="https://quartz.jzhao.xyz/">Quartz</a></li><li><a href="https://boxi-os.github.io/QuartzControl/">QuartzControl</a></li><li><a href="https://boxi-os.github.io/Quartz-Example-Template/">Example</a></li><li><a href="https://boxi-os.github.io/quartz-layout-box/">Layout Box</a></li><li><a href="https://boxi-os.github.io/quartz-multilanguage/">Multilanguage</a></li></ul></footer><div class="layout-box layout-box-current-folder"><div class="layout-box-content"><style>.explorer .folder-container[data-folderpath="8-rezepte/02-die-unsichtbare-box"]{background:var(--tpl-surface-tint)}.explorer .folder-container[data-folderpath="8-rezepte/02-die-unsichtbare-box"] .folder-title{color:var(--secondary)}</style></div></div></div><div class="qgframe-area qgframe-area-custom-8"><div class="flex-component" style="flex-direction: row; flex-wrap: wrap; gap: 1.5rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: 18rem; order: 0; align-self: stretch; justify-self: center;"><div class="backlinks"><h3>Backlinks</h3><ul id="list-0" class="overflow"><li><a href="../3-platzierung/03-dieselbe-box-mehrfach" class="internal">3.3 – Dieselbe Box mehrfach</a></li><li><a href="../8-rezepte/01-die-vier-boxen" class="internal">8.1 – Die vier Boxen dieser Website</a></li><li><a href="../8-rezepte/" class="internal">8 – Rezepte</a></li><li class="overflow-end"></li></ul></div></div></div></div></div></div></div></body><script src="../static/resource-after-e13fffa1.js" type="application/javascript" data-persist="true"></script><script src="../static/resource-after-8b336f9a.js" type="application/javascript" data-persist="true"></script><script src="../static/resource-after-baba652b.js" type="application/javascript" data-persist="true"></script><script src="../static/resource-after-5eb75950.js" type="module" data-persist="true"></script><script src="../static/resource-after-3af4bc0b.js" type="application/javascript" data-persist="true"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../postscript-4bebd943.js" type="module" data-persist="true"></script></html>
