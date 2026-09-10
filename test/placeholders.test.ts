@@ -41,6 +41,20 @@ describe("applyPlaceholders", () => {
     expect(applyPlaceholders("{{title}}", ctx, false)).toBe("Hello & <World>");
   });
 
+  // What a Markdown renderer leaves behind: `[x]({{root}}/y)` arrives with the braces
+  // percent-encoded, and the placeholder used to stay spelled out in the href.
+  it("replaces placeholders that a Markdown link left percent-encoded", () => {
+    expect(applyPlaceholders("%7B%7Broot%7D%7D/ueber", ctx)).toBe("../../ueber");
+    expect(applyPlaceholders("%7b%7bslug%7d%7d", ctx)).toBe("notes/deep/page");
+    expect(applyPlaceholders("%7B%7B%20root%20%7D%7D/x", ctx)).toBe("../../x");
+  });
+
+  it("leaves encoded text alone when it is not a placeholder", () => {
+    expect(applyPlaceholders("%7B%7Bnot a name%7D%7D", ctx)).toBe("%7B%7Bnot a name%7D%7D");
+    expect(applyPlaceholders("%7B%7Bunknown%7D%7D", ctx)).toBe("{{unknown}}");
+    expect(applyPlaceholders("nothing to do here", ctx)).toBe("nothing to do here");
+  });
+
   it("returns root as '.' for top-level pages", () => {
     const top = { ...ctx, fileData: { slug: "index", frontmatter: {} } } as PlaceholderContext;
     expect(applyPlaceholders("{{root}}/static/x.png", top)).toBe("./static/x.png");

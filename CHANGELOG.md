@@ -19,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Placeholders in the target of a **Markdown link** were not replaced. `[x]({{root}}/y)` in a `.md`
+  snippet is turned into an `href` by the Markdown renderer, which percent-encodes the braces along
+  the way; the replacement then looked for `{{root}}`, found nothing, and the link shipped with
+  `%7B%7Broot%7D%7D` in it. Found on 2026-09-10 while publishing four sites at once, where every
+  such link pointed nowhere under the path prefix of GitHub Pages. The encoded form is now
+  recognised as well, including `%20` where the writer left a space inside the braces. Text that
+  merely looks encoded (`%7B%7Bnot a name%7D%7D`) is left alone.
 - The build inlined its own copy of Preact and vfile: `noExternal: [/.*/]` in `tsup.config.ts` is
   evaluated before `external` and silently disabled the singleton list. The plugin therefore ran on
   a second Preact instance with its own `options` hooks. Only VNode creation was affected so far,

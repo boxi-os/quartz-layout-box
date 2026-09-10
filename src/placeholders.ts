@@ -2,6 +2,12 @@ import type { QuartzComponentProps } from "@quartz-community/types";
 import { escapeHTML } from "@quartz-community/utils/escape";
 
 const PLACEHOLDER = /\{\{\s*([\w.-]+)\s*\}\}/g;
+// The same token after a Markdown renderer has put it into a URL. `[x]({{root}}/y)` becomes an
+// `href`, and percent-encoding the braces is part of that - so by the time this file sees the
+// snippet, `{{root}}` reads `%7B%7Broot%7D%7D` and the pattern above no longer matches. Measured on
+// 2026-09-10 across four sites at once: every link in a Markdown snippet arrived with the
+// placeholder spelled out and pointed nowhere.
+const ENCODED_PLACEHOLDER = /%7B%7B([\w.\-%20]*?)%7D%7D/gi;
 const FRONTMATTER_PREFIX = "frontmatter.";
 
 export type PlaceholderContext = Pick<QuartzComponentProps, "fileData" | "cfg">;
@@ -12,8 +18,16 @@ export type PlaceholderContext = Pick<QuartzComponentProps, "fileData" | "cfg">;
  * Unknown placeholders are left untouched.
  */
 export function applyPlaceholders(html: string, ctx: PlaceholderContext, escape = true): string {
-  if (!html.includes("{{")) return html;
-  return html.replace(PLACEHOLDER, (match, name: string) => {
+  if (!html.includes("{{") && !/%7B%7B/i.test(html)) return html;
+  // Turn the encoded form back into the plain one first, so both take the same path below and a
+  // value only ever has to be escaped once. `%20` inside stands for the space a writer may have
+  // left in `{{ root }}`.
+  const plain = html.replace(ENCODED_PLACEHOLDER, (match, inner: string) =>
+    /^[\w.-]*$/.test(inner.replace(/%20/gi, "").trim())
+      ? `{{${inner.replace(/%20/gi, " ")}}}`
+      : match,
+  );
+  return plain.replace(PLACEHOLDER, (match, name: string) => {
     const value = resolvePlaceholder(name, ctx);
     if (value === undefined) return match;
     return escape ? escapeHTML(value) : value;
