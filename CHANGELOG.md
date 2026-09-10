@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The `dir` boundary let a **symlink** through. `resolveSnippetPath` compared the lexically resolved
+  path (`path.resolve` + `path.relative`), which says nothing about what a link inside `dir` points
+  at: a `snippets/link.html -> ../../../etc/passwd` was read without a word. Both sides now go
+  through `realpathSync` before they are compared — both, so that a `dir` that is itself a link (a
+  snippet folder linked into the site) keeps working. A file that does not exist is still reported
+  as missing rather than refused.
 - Placeholders in the target of a **Markdown link** were not replaced. `[x]({{root}}/y)` in a `.md`
   snippet is turned into an `href` by the Markdown renderer, which percent-encodes the braces along
   the way; the replacement then looked for `{{root}}`, found nothing, and the link shipped with

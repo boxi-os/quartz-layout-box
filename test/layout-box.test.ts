@@ -90,6 +90,29 @@ describe("LayoutBox", () => {
     }
   });
 
+  it("refuses a symlink inside the snippet directory that points outside", () => {
+    const outside = path.join(dir, "..", `secret-${path.basename(dir)}.html`);
+    fs.writeFileSync(outside, "<p>secret</p>");
+    fs.symlinkSync(outside, path.join(dir, "link.html"));
+    try {
+      expect(render({ file: "link.html" })).toBeNull();
+    } finally {
+      fs.rmSync(outside, { force: true });
+    }
+  });
+
+  it("reads a snippet when the snippet directory itself is a symlink", () => {
+    const real = fs.mkdtempSync(path.join(os.tmpdir(), "layout-box-real-"));
+    const link = path.join(dir, "linked-dir");
+    fs.writeFileSync(path.join(real, "snippet.html"), "<p>linked</p>");
+    fs.symlinkSync(real, link);
+    try {
+      expect(contentHtml(render({ dir: link }))).toBe("<p>linked</p>");
+    } finally {
+      fs.rmSync(real, { recursive: true, force: true });
+    }
+  });
+
   it("renders nothing for empty content", () => {
     write("snippet.html", "  \n");
     expect(render({})).toBeNull();

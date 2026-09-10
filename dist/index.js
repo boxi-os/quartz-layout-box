@@ -23242,14 +23242,29 @@ function warnOnce(key2, message) {
   warned.add(key2);
   console.warn(`[layout-box] ${message}`);
 }
+function escapes(base, target) {
+  const rel = path2.relative(base, target);
+  return rel === "" || rel.startsWith("..") || path2.isAbsolute(rel);
+}
+function realPathOrNull(p2) {
+  try {
+    return fs.realpathSync(p2);
+  } catch {
+    return null;
+  }
+}
 function resolveSnippetPath(dir, file) {
   const baseDir = path2.resolve(process.cwd(), dir);
   const absPath = path2.resolve(baseDir, file);
-  const rel = path2.relative(baseDir, absPath);
-  if (rel === "" || rel.startsWith("..") || path2.isAbsolute(rel)) {
+  const refuse = () => {
     warnOnce(`escape:${absPath}`, `Refusing to read "${file}" outside of "${dir}".`);
     return null;
-  }
+  };
+  if (escapes(baseDir, absPath)) return refuse();
+  const realBase = realPathOrNull(baseDir);
+  const realPath = realPathOrNull(absPath);
+  if (realBase === null || realPath === null) return absPath;
+  if (escapes(realBase, realPath)) return refuse();
   return absPath;
 }
 function readSnippet(absPath) {

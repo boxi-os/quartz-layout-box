@@ -44,15 +44,45 @@ function warnOnce(key: string, message: string): void {
   console.warn(`[layout-box] ${message}`);
 }
 
-/** Resolves `file` inside `dir` (relative to the site root). Returns null if it escapes `dir`. */
+/** True when `target` is `base` itself or lies outside of it. */
+function escapes(base: string, target: string): boolean {
+  const rel = path.relative(base, target);
+  return rel === "" || rel.startsWith("..") || path.isAbsolute(rel);
+}
+
+/** The real path behind `p`, or null when it does not exist. */
+function realPathOrNull(p: string): string | null {
+  try {
+    return fs.realpathSync(p);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Resolves `file` inside `dir` (relative to the site root). Returns null if it escapes `dir`.
+ *
+ * The lexical check alone would let a symlink through: `path.resolve` works on the string, so a
+ * link that sits inside `dir` and points anywhere on the machine passes it. Both sides are
+ * therefore resolved again through `realpathSync` — both, because `dir` itself may legitimately be
+ * a link (a snippet folder linked into the site). A file that does not exist is left to
+ * `readSnippet`, which reports it as missing.
+ */
 function resolveSnippetPath(dir: string, file: string): string | null {
   const baseDir = path.resolve(process.cwd(), dir);
   const absPath = path.resolve(baseDir, file);
-  const rel = path.relative(baseDir, absPath);
-  if (rel === "" || rel.startsWith("..") || path.isAbsolute(rel)) {
+  const refuse = (): null => {
     warnOnce(`escape:${absPath}`, `Refusing to read "${file}" outside of "${dir}".`);
     return null;
-  }
+  };
+
+  if (escapes(baseDir, absPath)) return refuse();
+
+  const realBase = realPathOrNull(baseDir);
+  const realPath = realPathOrNull(absPath);
+  if (realBase === null || realPath === null) return absPath;
+  if (escapes(realBase, realPath)) return refuse();
+
   return absPath;
 }
 
