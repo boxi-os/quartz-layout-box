@@ -49,8 +49,7 @@
     "format": "prettier . --check",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm run lint && npm run format && npm run test",
-    "prepublishOnly": "npm run build"
+    "check": "npm run typecheck && npm run lint && npm run format && npm run test"
   },
   "peerDependencies": {
     "preact": "^10.0.0",
@@ -110,9 +109,6 @@
   "engines": {
     "node": ">=22",
     "npm": ">=10.9.2"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "allowScripts": {
     "esbuild@0.27.7": true
