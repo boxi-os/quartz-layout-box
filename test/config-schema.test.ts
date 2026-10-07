@@ -227,6 +227,28 @@ describe("quartz.configSchema", () => {
     expect(bare).toEqual([]);
   });
 
+  // A description is read on its own, in a form. Two marks of a sentence cut from somewhere else:
+  // an odd number of backticks (a code span cut in half) and a pipe between code spans (the rest of
+  // a Markdown table row) - quartz-navigations 0.4.0 shipped 17 German descriptions like that,
+  // because its README's option table was split at escaped pipes.
+  it("keeps every description free of table debris", () => {
+    const debris: string[] = [];
+    for (const [at, prop] of properties(root, "")) {
+      const texts = [
+        prop.description,
+        ...Object.values(
+          (prop["x-quartz-l10n"] as Record<string, Record<string, unknown>>) ?? {},
+        ).map((l) => l.description),
+      ];
+      for (const text of texts) {
+        if (typeof text !== "string") continue;
+        if ((text.match(/`/g) ?? []).length % 2 === 1 || /[`"]\s*\\?\|\s*[`"]/.test(text))
+          debris.push(`${at}: ${text.slice(0, 60)}`);
+      }
+    }
+    expect(debris).toEqual([]);
+  });
+
   it("makes every x-quartz-when name a sibling and a value it can have", () => {
     const wrong: string[] = [];
     for (const [at, prop, siblings] of properties(root, "")) {
