@@ -98,6 +98,196 @@
       "collapsed": false,
       "frontmatterKey": "layoutBox"
     },
+    "configSchema": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "$ref": "#/$defs/file"
+        },
+        "dir": {
+          "type": "string",
+          "description": "Directory holding snippet files, relative to the site root. Paths leading out of it are refused.",
+          "x-quartz-order": 30,
+          "x-quartz-advanced": true,
+          "x-quartz-group": "Content",
+          "x-quartz-l10n": {
+            "de": {
+              "description": "Ordner für Snippet-Dateien, relativ zur Wurzel der Quartz-Site. Pfade, die aus diesem Ordner hinausführen, werden abgelehnt.",
+              "group": "Inhalt"
+            }
+          }
+        },
+        "html": {
+          "$ref": "#/$defs/html"
+        },
+        "placeholders": {
+          "$ref": "#/$defs/placeholders"
+        },
+        "title": {
+          "$ref": "#/$defs/title"
+        },
+        "collapsible": {
+          "$ref": "#/$defs/collapsible"
+        },
+        "collapsed": {
+          "$ref": "#/$defs/collapsed"
+        },
+        "className": {
+          "$ref": "#/$defs/className"
+        },
+        "frontmatterKey": {
+          "type": "string",
+          "description": "Frontmatter key a single page uses to hide or replace the box.",
+          "x-quartz-order": 90,
+          "x-quartz-advanced": true,
+          "x-quartz-group": "Per page and language",
+          "x-quartz-l10n": {
+            "de": {
+              "description": "Name des Frontmatter-Feldes, über das eine einzelne Seite die Box ausblenden oder tauschen kann.",
+              "group": "Je Seite und Sprache"
+            }
+          }
+        },
+        "byLang": {
+          "type": "object",
+          "description": "Per-language overrides, keyed by language code or locale (`en`, `en-US`; case-insensitive). The entry matching the page language is merged over the options above.",
+          "additionalProperties": {
+            "$ref": "#/$defs/langOptions"
+          },
+          "x-quartz-keys": "languages",
+          "x-quartz-order": 100,
+          "x-quartz-group": "Per page and language",
+          "x-quartz-l10n": {
+            "de": {
+              "description": "Abweichende Optionen je Sprache, Schlüssel ist der Sprachcode oder die Locale der Seite (`en`, `en-US`). Der passende Eintrag wird über die Optionen oben gelegt.",
+              "group": "Je Seite und Sprache"
+            }
+          }
+        }
+      },
+      "additionalProperties": false,
+      "$defs": {
+        "file": {
+          "type": "string",
+          "description": "Snippet file inside `dir`. Files ending in `.md` are rendered as Markdown. Ignored when `html` is set.",
+          "x-quartz-widget": "snippetFile",
+          "x-quartz-dir-option": "dir",
+          "x-quartz-order": 10,
+          "x-quartz-group": "Content",
+          "x-quartz-l10n": {
+            "de": {
+              "description": "Dateiname des Snippets in `dir`. Dateien mit der Endung `.md` werden als Markdown gerendert. Wird ignoriert, wenn `html` gesetzt ist.",
+              "group": "Inhalt"
+            }
+          }
+        },
+        "html": {
+          "type": "string",
+          "description": "Inline HTML rendered instead of a snippet file. Takes precedence over `file`.",
+          "x-quartz-widget": "html",
+          "x-quartz-order": 20,
+          "x-quartz-group": "Content",
+          "x-quartz-l10n": {
+            "de": {
+              "description": "HTML direkt in der Konfiguration. Hat Vorrang vor `file`.",
+              "group": "Inhalt"
+            }
+          }
+        },
+        "placeholders": {
+          "type": "boolean",
+          "description": "Replace `{{placeholder}}` tokens in the snippet.",
+          "x-quartz-order": 40,
+          "x-quartz-group": "Content",
+          "x-quartz-l10n": {
+            "de": {
+              "description": "Platzhalter der Form `{{name}}` im Snippet ersetzen. Ausgeschaltet bleibt der Text unverändert.",
+              "group": "Inhalt"
+            }
+          }
+        },
+        "title": {
+          "type": "string",
+          "description": "Heading rendered above the content (an `h3`, like other sidebar components). May contain placeholders.",
+          "x-quartz-order": 50,
+          "x-quartz-group": "Form",
+          "x-quartz-l10n": {
+            "de": {
+              "description": "Überschrift über dem Inhalt, gerendert als `h3` wie bei anderen Seitenleisten-Komponenten. Darf Platzhalter enthalten.",
+              "group": "Form"
+            }
+          }
+        },
+        "collapsible": {
+          "type": "boolean",
+          "description": "Wrap the box in `<details>`/`<summary>` using `title` as the summary. Needs a `title`.",
+          "x-quartz-order": 60,
+          "x-quartz-group": "Form",
+          "x-quartz-l10n": {
+            "de": {
+              "description": "Box als aufklappbares Element rendern; `title` wird zur Zeile, auf die man klickt. Braucht einen `title`.",
+              "group": "Form"
+            }
+          }
+        },
+        "collapsed": {
+          "type": "boolean",
+          "description": "Start collapsed.",
+          "x-quartz-when": {
+            "collapsible": true
+          },
+          "x-quartz-order": 70,
+          "x-quartz-group": "Form",
+          "x-quartz-l10n": {
+            "de": {
+              "description": "Box beim Laden zugeklappt anzeigen.",
+              "group": "Form"
+            }
+          }
+        },
+        "className": {
+          "type": "string",
+          "description": "Extra CSS class(es) added next to the fixed `layout-box` class, to style several instances apart.",
+          "x-quartz-order": 80,
+          "x-quartz-advanced": true,
+          "x-quartz-group": "Form",
+          "x-quartz-l10n": {
+            "de": {
+              "description": "Zusätzliche CSS-Klasse(n) neben der festen Klasse `layout-box`, um mehrere Instanzen getrennt zu gestalten.",
+              "group": "Form"
+            }
+          }
+        },
+        "langOptions": {
+          "type": "object",
+          "description": "Options that may differ per language.",
+          "properties": {
+            "file": {
+              "$ref": "#/$defs/file"
+            },
+            "html": {
+              "$ref": "#/$defs/html"
+            },
+            "placeholders": {
+              "$ref": "#/$defs/placeholders"
+            },
+            "title": {
+              "$ref": "#/$defs/title"
+            },
+            "collapsible": {
+              "$ref": "#/$defs/collapsible"
+            },
+            "collapsed": {
+              "$ref": "#/$defs/collapsed"
+            },
+            "className": {
+              "$ref": "#/$defs/className"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
     "components": {
       "LayoutBox": {
         "displayName": "Layout Box",

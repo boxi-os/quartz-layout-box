@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `quartz.configSchema` in `package.json`: a JSON Schema of every option, with descriptions in
+  English and German, groups, an order, the condition under which `collapsed` applies, and hints
+  for editors (`file` is a snippet in `dir`, `html` is HTML, `byLang` is keyed by language).
+  Quartz itself only passes it on; editors such as QuartzControl build their option form from it.
+  A test holds the schema against the options interface in `src/types.ts` and against
+  `quartz.defaultOptions`, in both directions.
+
 ## [0.3.1] - 2026-09-10
 
 ### Fixed
