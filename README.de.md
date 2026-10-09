@@ -55,6 +55,8 @@ Das Plugin darf mehrfach eingebunden werden, mit eigenen Optionen und eigener St
 | `frontmatterKey` | string  | `layoutBox`              | Name des Frontmatter-Feldes, über das eine einzelne Seite die Box steuern kann (siehe Abschnitt 6).                                                    |
 | `byLang`         | object  | –                        | Abweichende Optionen je Sprache, Schlüssel ist der Sprachcode oder die Locale der Seite (siehe Abschnitt 7).                                           |
 
+Eine Option ohne Wert (`html:` und nichts dahinter) gilt als nicht gesetzt, auch in `byLang`.
+
 Beispiel mit Inline-HTML, Titel und Aufklappen:
 
 ```yaml

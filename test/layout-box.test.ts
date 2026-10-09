@@ -205,6 +205,50 @@ describe("LayoutBox", () => {
     expect(titleOf(render({ title: "{{title}}", placeholders: false }, props))).toBe("{{title}}");
   });
 
+  describe("a key written without a value (null in YAML)", () => {
+    it("reads the file when html is null", () => {
+      write("snippet.html", "<p>file</p>");
+      expect(contentHtml(render({ html: null } as unknown as LayoutBoxOptions))).toBe(
+        "<p>file</p>",
+      );
+    });
+
+    it("falls back to the default file when file is null", () => {
+      write("snippet.html", "<p>default</p>");
+      expect(contentHtml(render({ file: null } as unknown as LayoutBoxOptions))).toBe(
+        "<p>default</p>",
+      );
+    });
+
+    it("falls back to the default directory when dir is null", () => {
+      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+      try {
+        const node = render({ dir: null, file: "dir-null.html" } as unknown as LayoutBoxOptions);
+        expect(node).toBeNull();
+        expect(warn).toHaveBeenCalledWith(
+          expect.stringContaining(path.join("quartz", "static", "snippets", "dir-null.html")),
+        );
+      } finally {
+        warn.mockRestore();
+      }
+    });
+
+    it("keeps the base option when a byLang entry sets it to null", () => {
+      write("note.md", "base");
+      const props = makeProps({
+        fileData: { slug: "a", frontmatter: { title: "T", lang: "en" } },
+      });
+      const node = render(
+        {
+          file: "note.md",
+          byLang: { en: { html: null, title: null } },
+        } as unknown as LayoutBoxOptions,
+        props,
+      );
+      expect(contentHtml(node)).toBe("<p>base</p>");
+    });
+  });
+
   describe("byLang", () => {
     const withLang = (lang: unknown, extra: Record<string, unknown> = {}) =>
       makeProps({

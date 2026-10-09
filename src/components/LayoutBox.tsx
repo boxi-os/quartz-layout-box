@@ -130,14 +130,27 @@ function readFrontmatterControl(frontmatter: unknown, key: string): FrontmatterC
   return {};
 }
 
+/**
+ * The options without the keys whose value is null. A key written with nothing after it (`html:`)
+ * comes out of YAML as null, and a spread passes that on: over the defaults it replaced `file` and
+ * `dir` with null, and an inline `html: null` took the inline path. All three crashed the build
+ * (`html.trim`, `path.resolve`). Such a key now counts as not written at all.
+ */
+function withoutNulls<T extends object>(options: T | null | undefined): Partial<T> {
+  if (!options || typeof options !== "object") return {};
+  return Object.fromEntries(
+    Object.entries(options).filter(([, value]) => value !== null),
+  ) as Partial<T>;
+}
+
 /** Lower-cases the `byLang` keys once, so the per-page lookup can be case-insensitive for free. */
 function normalizeByLang(
-  map: Record<string, LayoutBoxLangOptions> | undefined,
+  map: Record<string, LayoutBoxLangOptions> | null | undefined,
 ): Record<string, LayoutBoxLangOptions> | undefined {
-  if (!map) return undefined;
+  if (!map || typeof map !== "object") return undefined;
   const normalized: Record<string, LayoutBoxLangOptions> = {};
   for (const [key, entry] of Object.entries(map)) {
-    normalized[key.trim().toLowerCase()] = entry;
+    normalized[key.trim().toLowerCase()] = withoutNulls(entry);
   }
   return normalized;
 }
@@ -162,10 +175,11 @@ function optionsForPage(opts: ResolvedOptions, props: QuartzComponentProps): Res
 }
 
 export default ((userOpts?: LayoutBoxOptions) => {
+  const given = withoutNulls(userOpts);
   const opts: ResolvedOptions = {
     ...defaultOptions,
-    ...userOpts,
-    byLang: normalizeByLang(userOpts?.byLang),
+    ...given,
+    byLang: normalizeByLang(given.byLang),
   };
 
   // Checked per variant at construction so the mistake is reported before any page renders.

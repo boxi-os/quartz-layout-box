@@ -23307,11 +23307,17 @@ function readFrontmatterControl(frontmatter, key2) {
   }
   return {};
 }
+function withoutNulls(options) {
+  if (!options || typeof options !== "object") return {};
+  return Object.fromEntries(
+    Object.entries(options).filter(([, value]) => value !== null)
+  );
+}
 function normalizeByLang(map3) {
-  if (!map3) return void 0;
+  if (!map3 || typeof map3 !== "object") return void 0;
   const normalized = {};
   for (const [key2, entry] of Object.entries(map3)) {
-    normalized[key2.trim().toLowerCase()] = entry;
+    normalized[key2.trim().toLowerCase()] = withoutNulls(entry);
   }
   return normalized;
 }
@@ -23325,10 +23331,11 @@ function optionsForPage(opts, props) {
   return hit ? { ...opts, ...hit } : opts;
 }
 var LayoutBox_default = ((userOpts) => {
+  const given = withoutNulls(userOpts);
   const opts = {
     ...defaultOptions,
-    ...userOpts,
-    byLang: normalizeByLang(userOpts?.byLang)
+    ...given,
+    byLang: normalizeByLang(given.byLang)
   };
   const variants = [["", opts]];
   for (const [lang, entry] of Object.entries(opts.byLang ?? {})) {

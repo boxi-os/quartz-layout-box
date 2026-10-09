@@ -56,6 +56,9 @@ The plugin can be added more than once, with different options and different pla
 | `frontmatterKey` | `string`  | `"layoutBox"`              | Frontmatter key used for per-page control.                                     |
 | `byLang`         | `object`  | –                          | Per-language overrides, keyed by language code or locale. See below.           |
 
+An option written without a value (`html:` with nothing after it) counts as not set, in `byLang`
+as well.
+
 Inline HTML example:
 
 ```yaml
