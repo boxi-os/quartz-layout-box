@@ -5,7 +5,7 @@ anywhere in the page layout: sidebar, header, footer, before or after the body. 
 title block, a logo, a call-to-action, a notice, or any small piece of static markup you don't want
 to hard-code into a theme.
 
-**📖 The handbook is at [boxi-os.github.io/quartz-layout-box](https://boxi-os.github.io/quartz-layout-box/)** —
+**📖 The handbook is at [boxi-os.github.io/quartz-plugins/layout-box](https://boxi-os.github.io/quartz-plugins/layout-box/)** —
 nine chapters in English and German, with every option explained by example, a chapter of recipes,
 and the reasons behind the awkward parts. This README is the short version.
 
@@ -39,7 +39,7 @@ plugins:
 ```
 
 The plugin can be added more than once, with different options and different places — see
-[Placement](https://boxi-os.github.io/quartz-layout-box/en/3-placement/).
+[Placement](https://boxi-os.github.io/quartz-plugins/en/layout-box/3-placement/).
 
 ## Options
 
@@ -72,17 +72,17 @@ options:
 Everything else — placeholders, per-page control, two languages, styling, error messages and the
 limits — is in the handbook:
 
-| Chapter                                                                                |                                                                    |
-| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| [1 Getting started](https://boxi-os.github.io/quartz-layout-box/en/1-getting-started/) | What the plugin is for, your first box, what happens at build time |
-| [2 The snippet](https://boxi-os.github.io/quartz-layout-box/en/2-the-snippet/)         | File or configuration, HTML or Markdown                            |
-| [3 Placement](https://boxi-os.github.io/quartz-layout-box/en/3-placement/)             | The six places, order, several instances                           |
-| [4 Placeholders](https://boxi-os.github.io/quartz-layout-box/en/4-placeholders/)       | Every token, and why addresses want `{{root}}`                     |
-| [5 Form](https://boxi-os.github.io/quartz-layout-box/en/5-form/)                       | Heading, collapsing, styling                                       |
-| [6 Per page](https://boxi-os.github.io/quartz-layout-box/en/6-per-page/)               | Hiding and swapping through frontmatter                            |
-| [7 Two languages](https://boxi-os.github.io/quartz-layout-box/en/7-two-languages/)     | `byLang`                                                           |
-| [8 Recipes](https://boxi-os.github.io/quartz-layout-box/en/8-recipes/)                 | Finished examples, all of them visible on that site                |
-| [9 Reference](https://boxi-os.github.io/quartz-layout-box/en/9-reference/)             | Every option, every message, the limits                            |
+| Chapter                                                                                        |                                                                    |
+| ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [1 Getting started](https://boxi-os.github.io/quartz-plugins/en/layout-box/1-getting-started/) | What the plugin is for, your first box, what happens at build time |
+| [2 The snippet](https://boxi-os.github.io/quartz-plugins/en/layout-box/2-the-snippet/)         | File or configuration, HTML or Markdown                            |
+| [3 Placement](https://boxi-os.github.io/quartz-plugins/en/layout-box/3-placement/)             | The six places, order, several instances                           |
+| [4 Placeholders](https://boxi-os.github.io/quartz-plugins/en/layout-box/4-placeholders/)       | Every token, and why addresses want `{{root}}`                     |
+| [5 Form](https://boxi-os.github.io/quartz-plugins/en/layout-box/5-form/)                       | Heading, collapsing, styling                                       |
+| [6 Per page](https://boxi-os.github.io/quartz-plugins/en/layout-box/6-per-page/)               | Hiding and swapping through frontmatter                            |
+| [7 Two languages](https://boxi-os.github.io/quartz-plugins/en/layout-box/7-two-languages/)     | `byLang`                                                           |
+| [8 Recipes](https://boxi-os.github.io/quartz-plugins/en/layout-box/8-recipes/)                 | Finished examples, all of them visible on that site                |
+| [9 Reference](https://boxi-os.github.io/quartz-plugins/en/layout-box/9-reference/)             | Every option, every message, the limits                            |
 
 A German version of this README is in [README.de.md](README.de.md); the handbook is bilingual too.
 

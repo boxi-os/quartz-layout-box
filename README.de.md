@@ -5,7 +5,7 @@ an eine beliebige Stelle des Seitenlayouts setzt: Seitenspalte, Kopfbereich, Fu�
 dem Inhalt. Für eine Wortmarke, ein Logo, einen Aufruf, einen Hinweis — alles, was auf vielen Seiten
 gleich aussehen soll, ohne dass man es in ein Theme schreibt.
 
-**📖 Das Handbuch steht auf [boxi-os.github.io/quartz-layout-box](https://boxi-os.github.io/quartz-layout-box/)** —
+**📖 Das Handbuch steht auf [boxi-os.github.io/quartz-plugins/layout-box](https://boxi-os.github.io/quartz-plugins/layout-box/)** —
 neun Kapitel auf Deutsch und Englisch, jede Option am Beispiel, ein Kapitel mit Rezepten und die
 Gründe für die sperrigen Stellen. Diese README ist die Kurzfassung.
 
@@ -38,7 +38,7 @@ plugins:
 ```
 
 Das Plugin darf mehrfach eingebunden werden, mit eigenen Optionen und eigener Stelle — siehe
-[Platzierung](https://boxi-os.github.io/quartz-layout-box/3-platzierung/).
+[Platzierung](https://boxi-os.github.io/quartz-plugins/layout-box/3-platzierung/).
 
 ## Optionen
 
@@ -71,17 +71,17 @@ options:
 Alles Weitere — Platzhalter, Steuerung je Seite, zwei Sprachen, Gestaltung, Meldungen und Grenzen —
 steht im Handbuch:
 
-| Kapitel                                                                         |                                                         |
-| ------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| [1 Einstieg](https://boxi-os.github.io/quartz-layout-box/1-einstieg/)           | Wozu das Plugin, die erste Box, was beim Bauen passiert |
-| [2 Der Schnipsel](https://boxi-os.github.io/quartz-layout-box/2-der-schnipsel/) | Datei oder Konfiguration, HTML oder Markdown            |
-| [3 Platzierung](https://boxi-os.github.io/quartz-layout-box/3-platzierung/)     | Die sechs Stellen, Reihenfolge, mehrere Instanzen       |
-| [4 Platzhalter](https://boxi-os.github.io/quartz-layout-box/4-platzhalter/)     | Jeder Token, und warum Adressen `{{root}}` brauchen     |
-| [5 Form](https://boxi-os.github.io/quartz-layout-box/5-form/)                   | Titel, Aufklappen, Gestalten                            |
-| [6 Je Seite](https://boxi-os.github.io/quartz-layout-box/6-je-seite/)           | Ausblenden und tauschen über das Frontmatter            |
-| [7 Zwei Sprachen](https://boxi-os.github.io/quartz-layout-box/7-zwei-sprachen/) | `byLang`                                                |
-| [8 Rezepte](https://boxi-os.github.io/quartz-layout-box/8-rezepte/)             | Fertige Beispiele, alle auf jener Seite zu sehen        |
-| [9 Nachschlagen](https://boxi-os.github.io/quartz-layout-box/9-nachschlagen/)   | Alle Optionen, alle Meldungen, die Grenzen              |
+| Kapitel                                                                                 |                                                         |
+| --------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| [1 Einstieg](https://boxi-os.github.io/quartz-plugins/layout-box/1-einstieg/)           | Wozu das Plugin, die erste Box, was beim Bauen passiert |
+| [2 Der Schnipsel](https://boxi-os.github.io/quartz-plugins/layout-box/2-der-schnipsel/) | Datei oder Konfiguration, HTML oder Markdown            |
+| [3 Platzierung](https://boxi-os.github.io/quartz-plugins/layout-box/3-platzierung/)     | Die sechs Stellen, Reihenfolge, mehrere Instanzen       |
+| [4 Platzhalter](https://boxi-os.github.io/quartz-plugins/layout-box/4-platzhalter/)     | Jeder Token, und warum Adressen `{{root}}` brauchen     |
+| [5 Form](https://boxi-os.github.io/quartz-plugins/layout-box/5-form/)                   | Titel, Aufklappen, Gestalten                            |
+| [6 Je Seite](https://boxi-os.github.io/quartz-plugins/layout-box/6-je-seite/)           | Ausblenden und tauschen über das Frontmatter            |
+| [7 Zwei Sprachen](https://boxi-os.github.io/quartz-plugins/layout-box/7-zwei-sprachen/) | `byLang`                                                |
+| [8 Rezepte](https://boxi-os.github.io/quartz-plugins/layout-box/8-rezepte/)             | Fertige Beispiele, alle auf jener Seite zu sehen        |
+| [9 Nachschlagen](https://boxi-os.github.io/quartz-plugins/layout-box/9-nachschlagen/)   | Alle Optionen, alle Meldungen, die Grenzen              |
 
 Die englische Fassung dieser README steht in [README.md](README.md).
 
