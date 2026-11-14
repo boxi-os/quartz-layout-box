@@ -103,10 +103,8 @@ Die wichtigsten Dateien: `src/components/LayoutBox.tsx` (Komponente), `src/place
 
 ## Wie das hier entstanden ist
 
-Ein Hobbyprojekt. Das Plugin ist im Zuge von
-[QuartzControl](https://github.com/boxi-os/QuartzControl) entstanden, das heute
-[QuartzHub](https://github.com/boxi-os/QuartzHub) heißt, funktioniert aber in jedem Quartz-5-Projekt
-für sich.
+Ein Hobbyprojekt, entstanden neben [QuartzHub](https://github.com/boxi-os/QuartzHub); es
+funktioniert aber in jedem Quartz-5-Projekt für sich.
 
 Folgendes möchte ich an dieser Stelle transparent machen: Der Code ist zum größten Teil mit
 [Claude Code](https://claude.com/claude-code) entstanden; die Commits sagen das mit einem

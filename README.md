@@ -99,9 +99,8 @@ commit the updated `dist/`.
 
 ## How this was built
 
-A hobby project. The plugin came out of work on
-[QuartzControl](https://github.com/boxi-os/QuartzControl), now succeeded by
-[QuartzHub](https://github.com/boxi-os/QuartzHub), but it stands on its own in any Quartz 5 project.
+A hobby project, made alongside [QuartzHub](https://github.com/boxi-os/QuartzHub); it stands on its
+own in any Quartz 5 project.
 
 One thing I want to be open about: the code was written mostly with
 [Claude Code](https://claude.com/claude-code); the commits say so with a `Co-Authored-By` line. I
